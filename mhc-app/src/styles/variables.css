@@ -1,0 +1,32 @@
+:root {
+  --color-bg: #FFFFFF;
+  --color-bg-dark: #0D1117;
+  --color-bg-muted: #F7F7F7;
+  --color-text: #111111;
+  --color-text-muted: #6B7280;
+  --color-accent: #E85D2F;
+  --color-accent-hover: #cf4e23;
+  --color-border: #E5E7EB;
+
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --text-3xl: 40px;
+  --text-4xl: 52px;
+  --text-5xl: 68px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.10);
+
+  --max-width: 1200px;
+  --nav-height: 68px;
+}
