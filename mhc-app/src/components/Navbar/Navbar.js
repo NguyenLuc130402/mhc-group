@@ -1,28 +1,32 @@
-import { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronDown, TrendingUp, Users, BarChart2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, X, ChevronDown, TrendingUp, Users, BarChart2, Zap, Target, LineChart } from 'lucide-react';
 import logo from '../../assets/images/LogoMHC.png';
 import './Navbar.css';
 
-const services = [
+const serviceGroups = [
   {
-    label: 'Google Ads',
-    desc: 'Search Ads, Demand keywords, Lead generation',
-    icon: <TrendingUp />,
-    href: '#services',
+    heading: 'MARKETING DIGITAL',
+    items: [
+      { label: 'Google Ads', desc: 'Tối ưu chiến dịch Search, Display & YouTube Ads', icon: <TrendingUp size={18} />, href: '#services' },
+      { label: 'Lead Generation', desc: 'Thu hút và chuyển đổi khách hàng tiềm năng hiệu quả', icon: <Users size={18} />, href: '#services' },
+    ],
   },
   {
-    label: 'Affiliate Marketing',
-    desc: 'Setup hệ thống affiliate, Scale traffic, Tối ưu conversion',
-    icon: <Users />,
-    href: '#services',
+    heading: 'PERFORMANCE',
+    items: [
+      { label: 'Affiliate Marketing', desc: 'Setup hệ thống affiliate, scale traffic & tối ưu conversion', icon: <Zap size={18} />, href: '#services' },
+      { label: 'Performance Marketing', desc: 'Funnel, landing page và đo lường chuyển đổi toàn diện', icon: <BarChart2 size={18} />, href: '#services' },
+    ],
   },
   {
-    label: 'Performance Marketing',
-    desc: 'Funnel, Landing page, Conversion tracking',
-    icon: <BarChart2 />,
-    href: '#services',
+    heading: 'ANALYTICS & CRO',
+    items: [
+      { label: 'Conversion Tracking', desc: 'Theo dõi & phân tích từng điểm chạm trong hành trình mua hàng', icon: <Target size={18} />, href: '#services' },
+      { label: 'Báo cáo & Tối ưu', desc: 'Dashboard realtime, tối ưu liên tục theo dữ liệu thực', icon: <LineChart size={18} />, href: '#services' },
+    ],
   },
 ];
+
 const links = [
   { label: 'Trang chủ', href: '#top' },
   { label: 'Giới thiệu', href: '#about' },
@@ -35,24 +39,12 @@ const links = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
-  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    const onClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', onClickOutside);
-    return () => document.removeEventListener('mousedown', onClickOutside);
   }, []);
 
   return (
@@ -68,29 +60,36 @@ export default function Navbar() {
 
         <nav className="navbar__links">
           {links.map(l => l.dropdown ? (
-            <div
-              key={l.label}
-              className={`navbar__dropdown-wrap${dropdownOpen ? ' navbar__dropdown-wrap--open' : ''}`}
-              ref={dropdownRef}
-            >
-              <button
-                className="navbar__link navbar__link--dropdown"
-                onClick={() => setDropdownOpen(v => !v)}
-              >
+            <div key={l.label} className="navbar__dropdown-wrap">
+              <span className="navbar__link navbar__link--dropdown">
                 {l.label}
                 <ChevronDown size={14} className="navbar__chevron" />
-              </button>
+              </span>
               <div className="navbar__dropdown">
                 <div className="navbar__dropdown-inner">
-                  {services.map(s => (
-                    <a key={s.label} href={s.href} className="navbar__dropdown-item" onClick={() => setDropdownOpen(false)}>
-                      <div className="navbar__dropdown-icon">{s.icon}</div>
-                      <div className="navbar__dropdown-content">
-                        <span className="navbar__dropdown-label">{s.label}</span>
-                        <span className="navbar__dropdown-desc">{s.desc}</span>
+                  <div className="navbar__dropdown-grid">
+                    {serviceGroups.map(group => (
+                      <div key={group.heading} className="navbar__dropdown-group">
+                        <span className="navbar__dropdown-group-heading">{group.heading}</span>
+                        {group.items.map(item => (
+                          <a key={item.label} href={item.href} className="navbar__dropdown-item">
+                            <div className="navbar__dropdown-icon">{item.icon}</div>
+                            <div className="navbar__dropdown-content">
+                              <span className="navbar__dropdown-label">{item.label}</span>
+                              <span className="navbar__dropdown-desc">{item.desc}</span>
+                            </div>
+                          </a>
+                        ))}
                       </div>
-                    </a>
-                  ))}
+                    ))}
+                  </div>
+                  <div className="navbar__dropdown-cta">
+                    <div className="navbar__dropdown-cta-text">
+                      <span className="navbar__dropdown-cta-title">Tư vấn miễn phí</span>
+                      <span className="navbar__dropdown-cta-sub">Liên hệ để được hỗ trợ miễn phí</span>
+                    </div>
+                    <a href="#contact" className="btn-primary navbar__dropdown-cta-btn">Liên hệ tư vấn</a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -123,15 +122,15 @@ export default function Navbar() {
               </button>
               {mobileServicesOpen && (
                 <div className="navbar__mobile-services">
-                  {services.map(s => (
+                  {serviceGroups.flatMap(g => g.items).map(item => (
                     <a
-                      key={s.label}
-                      href={s.href}
+                      key={item.label}
+                      href={item.href}
                       className="navbar__mobile-service-item"
                       onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}
                     >
-                      <div className="navbar__dropdown-icon">{s.icon}</div>
-                      <span>{s.label}</span>
+                      <div className="navbar__dropdown-icon">{item.icon}</div>
+                      <span>{item.label}</span>
                     </a>
                   ))}
                 </div>

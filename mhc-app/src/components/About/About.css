@@ -51,7 +51,7 @@
 /* Visual */
 .about__visual {
   position: relative;
-  height: 400px;
+  height: 420px;
 }
 
 .about__visual-card {
@@ -97,19 +97,41 @@
   color: var(--color-text);
 }
 
+.about__visual-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
 .about__chart-bars {
   display: flex;
   align-items: flex-end;
   gap: 8px;
-  height: 120px;
-  margin-bottom: 20px;
+  height: 140px;
+  margin-bottom: 8px;
 }
 
 .about__bar-wrap {
   flex: 1;
   height: 100%;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0;
+}
+
+.about__bar-value {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 3px;
+  line-height: 1;
 }
 
 .about__bar {
@@ -118,6 +140,13 @@
   background: linear-gradient(180deg, var(--color-accent) 0%, #f4926c 100%);
   border-radius: 3px 3px 0 0;
   transform-origin: bottom;
+}
+
+.about__bar-month {
+  font-size: 9px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+  font-weight: 500;
 }
 
 .about__visual-stat {
