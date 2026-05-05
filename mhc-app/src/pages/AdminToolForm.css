@@ -289,6 +289,60 @@
   white-space: nowrap;
 }
 
+/* Upload logo */
+.af-logo-upload__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.af-logo-upload__btn:hover:not(:disabled) { border-color: #E85D2F; background: #fff5f2; color: #E85D2F; }
+.af-logo-upload__btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.af-logo-upload__preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.af-logo-upload__img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+.af-logo-upload__remove {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #ef4444;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.af-logo-upload__remove:hover { text-decoration: underline; }
+
+.af-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 4px;
+  color: #94a3b8;
+  font-size: 11px;
+}
+.af-divider::before,
+.af-divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+
 /* Radio */
 .af-radio-row { display: flex; gap: 16px; }
 .af-radio {

@@ -15,13 +15,21 @@ const categoryIcons = {
 };
 
 export function ToolLogo({ tool, size = 80 }) {
-  const { logoBg, logoFill, logoText, logoShape, logoBgFill } = tool;
+  const { logoBg, logoFill, logoText, logoShape, logoBgFill, logoUrl } = tool;
   const radius = logoShape === 'circle' ? '50%' : '14px';
-  const inner = logoBgFill
-    ? { background: logoBgFill, borderRadius: radius, width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center' }
-    : { background: logoBg, borderRadius: radius, width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center' };
+  const wrap = { borderRadius: radius, width: size, height: size, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };
+
+  if (logoUrl) {
+    return (
+      <div style={{ ...wrap, background: logoBg || '#f5f5f5' }}>
+        <img src={logoUrl} alt={logoText} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      </div>
+    );
+  }
+
+  const bg = logoBgFill || logoBg;
   return (
-    <div style={inner}>
+    <div style={{ ...wrap, background: bg }}>
       <span style={{ color: logoBgFill ? '#fff' : logoFill, fontWeight: 800, fontSize: Math.round(size * 0.22), letterSpacing: '-0.5px' }}>
         {logoText}
       </span>

@@ -21,8 +21,8 @@ export default function Register() {
     try {
       const data = await register(form.username, form.email, form.password);
       saveAuth(data.token, data.username);
-      console.log(saveAuth)
-      //navigate('/admin');
+      //console.log(saveAuth)
+      navigate('/admin');
     } catch (err) {
       setError(err.message);
       //console.log(error)

@@ -14,7 +14,7 @@ const fadeUp = {
 const metrics = [
   { icon: DollarSign, value: '500+ Tỷ', label: 'Doanh thu tạo ra', trend: '+18%' },
   { icon: Users, value: '1,200+', label: 'Khách hàng tin tưởng', trend: '+24%' },
-  { icon: TrendingUp, value: '15+', label: 'Năm kinh nghiệm', trend: 'Since 2009' },
+  { icon: TrendingUp, value: '10+', label: 'Năm kinh nghiệm', trend: 'Since 2013' },
 ];
 
 export default function Hero() {

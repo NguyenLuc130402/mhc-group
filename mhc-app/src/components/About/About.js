@@ -4,7 +4,7 @@ import { CheckCircle, ArrowRight } from 'lucide-react';
 import './About.css';
 
 const points = [
-  'Chuyên gia Google Ads, Affiliate & Performance Marketing với hơn 15 năm kinh nghiệm',
+  'Chuyên gia Google Ads, Affiliate & Performance Marketing với hơn 10 năm kinh nghiệm',
   'Hệ thống tracking & báo cáo minh bạch theo thời gian thực',
   'Tư vấn chiến lược cá nhân hóa, tối ưu ngân sách tối đa ROI',
   'Cam kết KPI rõ ràng, đo lường hiệu quả bằng số liệu thực',

@@ -64,6 +64,19 @@ export async function login(email, password) {
   return data;
 }
 
+export async function uploadLogo(file) {
+  const form = new FormData();
+  form.append('logo', file);
+  const res = await fetch(`${BASE}/upload`, {
+    method: 'POST',
+    headers: authHeader(),
+    body: form,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Upload thất bại');
+  return data.url;
+}
+
 export async function register(username, email, password) {
   const res = await fetch(`${BASE}/auth/register`, {
     method: 'POST',

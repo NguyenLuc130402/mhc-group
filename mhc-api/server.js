@@ -6,12 +6,37 @@ const cors     = require('cors');
 const mongoose = require('mongoose');
 const bcrypt   = require('bcryptjs');
 const jwt      = require('jsonwebtoken');
+const multer   = require('multer');
 const fs       = require('fs');
 const path     = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+/* ── Static uploads ── */
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(UPLOADS_DIR));
+
+/* ── Multer config ── */
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
+  filename:    (req, file, cb) => {
+    const ext  = path.extname(file.originalname).toLowerCase();
+    const name = `logo_${Date.now()}${ext}`;
+    cb(null, name);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|webp|svg/;
+    if (allowed.test(path.extname(file.originalname).toLowerCase())) cb(null, true);
+    else cb(new Error('Chỉ chấp nhận ảnh JPG, PNG, WebP, SVG'));
+  },
+});
 
 /* ── Schemas ── */
 const userSchema = new mongoose.Schema({
@@ -26,6 +51,7 @@ const toolSchema = new mongoose.Schema({
   category:   String,
   rating:     Number,
   reviews:    Number,
+  logoUrl:    String,
   logoBg:     String,
   logoFill:   String,
   logoText:   String,
@@ -94,6 +120,19 @@ app.post('/api/auth/login', async (req, res) => {
 
   const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
   res.json({ token, username: user.username });
+});
+
+/* ── Upload ── */
+app.post('/api/upload', authenticateToken, upload.single('logo'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Không có file được upload' });
+  const url = `http://localhost:${process.env.PORT || 5000}/uploads/${req.file.filename}`;
+  res.json({ url });
+});
+
+app.use((err, req, res, next) => {
+  if (err.code === 'LIMIT_FILE_SIZE') return res.status(400).json({ error: 'File vượt quá 5MB' });
+  if (err.message) return res.status(400).json({ error: err.message });
+  next(err);
 });
 
 /* ── Seed data lần đầu ── */

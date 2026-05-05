@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Star, Check, GripVertical } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Star, Check, GripVertical, Upload, X } from 'lucide-react';
 import { CATEGORIES, generateId } from '../data/toolsData';
 import { getEmptyDetail } from '../data/toolsDetail';
-import { fetchTools, createTool, updateTool, fetchToolDetail, saveToolDetail } from '../api/toolsApi';
+import { fetchTools, createTool, updateTool, fetchToolDetail, saveToolDetail, uploadLogo } from '../api/toolsApi';
 import { ToolLogo } from '../components/ToolReviews/ToolReviews';
 import './AdminToolForm.css';
 
@@ -136,18 +136,21 @@ function ReviewList({ items, onChange }) {
 
 const DEFAULT_BASIC = {
   name: '', category: CATEGORIES[0], rating: 4.5, reviews: 1000,
-  logoBg: '#f0f4ff', logoFill: '#4285F4', logoText: '', logoShape: 'rounded', logoBgFill: '',
+  logoUrl: '', logoBg: '#f0f4ff', logoFill: '#4285F4', logoText: '', logoShape: 'rounded', logoBgFill: '',
 };
 
 export default function AdminToolForm() {
   const navigate = useNavigate();
   const { id: toolId } = useParams();
   const isEdit = !!toolId;
+  const fileInputRef = useRef(null);
 
-  const [basic,   setBasic]   = useState(DEFAULT_BASIC);
-  const [detail,  setDetail]  = useState(getEmptyDetail());
-  const [loading, setLoading] = useState(isEdit);
-  const [saving,  setSaving]  = useState(false);
+  const [basic,     setBasic]     = useState(DEFAULT_BASIC);
+  const [detail,    setDetail]    = useState(getEmptyDetail());
+  const [loading,   setLoading]   = useState(isEdit);
+  const [saving,    setSaving]    = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
 
   useEffect(() => {
     if (!isEdit) return;
@@ -175,9 +178,26 @@ export default function AdminToolForm() {
   const setB = (k, v) => setBasic(p => ({ ...p, [k]: v }));
   const setD = (k, v) => setDetail(p => ({ ...p, [k]: v }));
 
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setPreviewUrl(URL.createObjectURL(file));
+    setUploading(true);
+    try {
+      const url = await uploadLogo(file);
+      setB('logoUrl', url);
+    } catch (err) {
+     // console.log(err.message);
+      setPreviewUrl('');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!basic.name.trim() || !basic.logoText.trim()) return;
+    if (!basic.name.trim()) return;
+    if (!basic.logoUrl && !basic.logoText.trim()) return alert('Vui lòng upload ảnh logo hoặc nhập chữ logo');
     setSaving(true);
     try {
       const toolData = { ...basic, rating: parseFloat(basic.rating), reviews: parseInt(basic.reviews, 10) || 0 };
@@ -279,8 +299,28 @@ export default function AdminToolForm() {
                 <p className="af-logo-preview__cat">{basic.category}</p>
               </div>
             </div>
-            <Field label="Chữ logo (2–4 ký tự)" required>
-              <Input value={basic.logoText} onChange={v => setB('logoText', v.toUpperCase().slice(0, 4))} placeholder="VD: GPT" maxLength={4} />
+
+            {/* Upload ảnh logo */}
+            <Field label="Ảnh logo (< 5MB)">
+              <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+              {previewUrl || basic.logoUrl ? (
+                <div className="af-logo-upload__preview">
+                  <img src={previewUrl || basic.logoUrl} alt="logo preview" className="af-logo-upload__img" />
+                  <button type="button" className="af-logo-upload__remove" onClick={() => { setB('logoUrl', ''); setPreviewUrl(''); }}>
+                    <X size={14} /> Xóa ảnh
+                  </button>
+                </div>
+              ) : (
+                <button type="button" className="af-logo-upload__btn" onClick={() => fileInputRef.current.click()} disabled={uploading}>
+                  <Upload size={15} /> {uploading ? 'Đang upload...' : 'Chọn ảnh'}
+                </button>
+              )}
+            </Field>
+
+            <div className="af-divider"><span>hoặc dùng chữ</span></div>
+
+            <Field label="Chữ logo (2–4 ký tự)">
+              <Input value={basic.logoText} onChange={v => setB('logoText', v.toUpperCase().slice(0, 4))} placeholder="VD: GPT" maxLength={4} disabled={!!basic.logoUrl} />
             </Field>
             <div className="af-color-row">
               <Field label="Màu nền">
