@@ -50,7 +50,7 @@ export default function Navbar() {
   return (
     <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}`}>
       <div className="container navbar__inner">
-        <a href="#top" className="navbar__logo">
+        <a href="/" className="navbar__logo">
           <img src={logo} alt="MHC Group" className="navbar__logo-img" />
           <div className="navbar__logo-text">
             <span className="navbar__logo-name">MHC Group</span>

@@ -1,163 +1,37 @@
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, ArrowLeft, Star, X, Check } from 'lucide-react';
-import { CATEGORIES, getTools, saveTools, generateId } from '../data/toolsData';
+import { useNavigate } from 'react-router-dom';
+import {
+  LayoutDashboard, Star, Cpu, Users, Grid, Megaphone, Search,
+  Plus, Pencil, Trash2, X, LogOut, ChevronRight
+} from 'lucide-react';
+import { CATEGORIES } from '../data/toolsData';
+import { fetchTools, deleteTool } from '../api/toolsApi';
 import { ToolLogo } from '../components/ToolReviews/ToolReviews';
+import { clearAuth, getUser } from '../utils/auth';
 import './Admin.css';
 
-const EMPTY_FORM = {
-  name: '',
-  category: CATEGORIES[0],
-  rating: 4.5,
-  reviews: 1000,
-  logoBg: '#f0f4ff',
-  logoFill: '#4285F4',
-  logoText: '',
-  logoShape: 'rounded',
-  logoBgFill: '',
-};
+const NAV = [
+  { label: 'Dashboard',      icon: <LayoutDashboard size={16} />, key: 'all' },
+  { label: 'AI Tool',        icon: <Cpu size={16} />,             key: 'AI Tool' },
+  { label: 'CRM Tool',       icon: <Users size={16} />,           key: 'CRM Tool' },
+  { label: 'SaaS Platforms', icon: <Grid size={16} />,            key: 'SaaS Platforms' },
+  { label: 'Marketing Tool', icon: <Megaphone size={16} />,       key: 'Marketing Tool' },
+  { label: 'SEO Tool',       icon: <Search size={16} />,          key: 'SEO Tool' },
+];
 
-function StarPicker({ value, onChange }) {
-  return (
-    <div className="star-picker">
-      {[1, 2, 3, 4, 5].map(i => (
-        <button key={i} type="button" onClick={() => onChange(i)} className={`star-picker__btn${i <= value ? ' star-picker__btn--on' : ''}`}>
-          <Star size={20} fill={i <= value ? '#f59e0b' : 'none'} color={i <= value ? '#f59e0b' : '#d1d5db'} />
-        </button>
-      ))}
-      <span className="star-picker__val">{Number(value).toFixed(1)}</span>
-    </div>
-  );
-}
-
-function Modal({ tool, onClose, onSave }) {
-  const [form, setForm] = useState(tool || EMPTY_FORM);
-  const isEdit = !!tool?.id;
-
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.name.trim() || !form.logoText.trim()) return;
-    onSave({
-      ...form,
-      id: isEdit ? form.id : generateId(),
-      rating: parseFloat(form.rating),
-      reviews: parseInt(form.reviews, 10) || 0,
-    });
-  };
-
-  const preview = { ...form, rating: parseFloat(form.rating) || 0 };
-
-  return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal">
-        <div className="modal__header">
-          <h2 className="modal__title">{isEdit ? 'Sửa tool' : 'Thêm tool mới'}</h2>
-          <button className="modal__close" onClick={onClose}><X size={18} /></button>
-        </div>
-
-        <form className="modal__body" onSubmit={handleSubmit}>
-          <div className="modal__preview">
-            <ToolLogo tool={preview} size={72} />
-            <div>
-              <p className="modal__preview-name">{form.name || 'Tên tool'}</p>
-              <p className="modal__preview-cat">{form.category}</p>
-            </div>
-          </div>
-
-          <div className="modal__grid">
-            <div className="field">
-              <label className="field__label">Tên tool *</label>
-              <input className="field__input" value={form.name} onChange={e => set('name', e.target.value)} placeholder="VD: ChatGPT" required />
-            </div>
-
-            <div className="field">
-              <label className="field__label">Danh mục *</label>
-              <select className="field__input" value={form.category} onChange={e => set('category', e.target.value)}>
-                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-              </select>
-            </div>
-
-            <div className="field">
-              <label className="field__label">Chữ logo * (2-4 ký tự)</label>
-              <input className="field__input" value={form.logoText} onChange={e => set('logoText', e.target.value.toUpperCase().slice(0, 4))} placeholder="VD: GPT" required maxLength={4} />
-            </div>
-
-            <div className="field">
-              <label className="field__label">Số lượt đánh giá</label>
-              <input className="field__input" type="number" min={0} value={form.reviews} onChange={e => set('reviews', e.target.value)} />
-            </div>
-
-            <div className="field">
-              <label className="field__label">Màu nền logo</label>
-              <div className="field__color-row">
-                <input type="color" className="field__color" value={form.logoBg} onChange={e => set('logoBg', e.target.value)} />
-                <span className="field__color-val">{form.logoBg}</span>
-              </div>
-            </div>
-
-            <div className="field">
-              <label className="field__label">Màu chữ logo</label>
-              <div className="field__color-row">
-                <input type="color" className="field__color" value={form.logoFill} onChange={e => set('logoFill', e.target.value)} />
-                <span className="field__color-val">{form.logoFill}</span>
-              </div>
-            </div>
-
-            <div className="field">
-              <label className="field__label">Màu fill logo (tùy chọn)</label>
-              <div className="field__color-row">
-                <input type="color" className="field__color" value={form.logoBgFill || '#ffffff'} onChange={e => set('logoBgFill', e.target.value)} />
-                <span className="field__color-val">{form.logoBgFill || 'Không dùng'}</span>
-                {form.logoBgFill && <button type="button" className="field__color-clear" onClick={() => set('logoBgFill', '')}>Xóa</button>}
-              </div>
-            </div>
-
-            <div className="field">
-              <label className="field__label">Hình dạng logo</label>
-              <div className="field__radio-row">
-                {['rounded', 'circle'].map(s => (
-                  <label key={s} className="field__radio">
-                    <input type="radio" name="logoShape" value={s} checked={form.logoShape === s} onChange={() => set('logoShape', s)} />
-                    {s === 'rounded' ? 'Bo góc' : 'Tròn'}
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="field">
-            <label className="field__label">Đánh giá</label>
-            <StarPicker value={parseFloat(form.rating)} onChange={v => set('rating', v)} />
-          </div>
-
-          <div className="modal__actions">
-            <button type="button" className="btn-admin btn-admin--ghost" onClick={onClose}>Hủy</button>
-            <button type="submit" className="btn-admin btn-admin--primary">
-              <Check size={15} /> {isEdit ? 'Lưu thay đổi' : 'Thêm tool'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function ConfirmDialog({ name, onConfirm, onCancel }) {
+function Confirm({ name, onConfirm, onCancel }) {
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onCancel()}>
       <div className="modal modal--sm">
         <div className="modal__header">
           <h2 className="modal__title">Xác nhận xóa</h2>
-          <button className="modal__close" onClick={onCancel}><X size={18} /></button>
+          <button className="modal__close" onClick={onCancel}><X size={16} /></button>
         </div>
         <div className="modal__body">
-          <p className="confirm__text">Bạn có chắc muốn xóa <strong>{name}</strong>?</p>
+          <p className="confirm__text">Bạn có chắc muốn xóa <strong>{name}</strong>? Hành động này không thể hoàn tác.</p>
           <div className="modal__actions">
-            <button className="btn-admin btn-admin--ghost" onClick={onCancel}>Hủy</button>
-            <button className="btn-admin btn-admin--danger" onClick={onConfirm}>
-              <Trash2 size={15} /> Xóa
-            </button>
+            <button className="btn-a btn-a--ghost" onClick={onCancel}>Hủy</button>
+            <button className="btn-a btn-a--danger" onClick={onConfirm}><Trash2 size={14} /> Xóa</button>
           </div>
         </div>
       </div>
@@ -166,14 +40,18 @@ function ConfirmDialog({ name, onConfirm, onCancel }) {
 }
 
 export default function Admin() {
+  const navigate = useNavigate();
   const [tools, setTools]         = useState([]);
-  const [activeTab, setActiveTab] = useState(CATEGORIES[0]);
-  const [modal, setModal]         = useState(null);
+  const [navKey, setNavKey]       = useState('all');
   const [confirmId, setConfirmId] = useState(null);
   const [toast, setToast]         = useState(null);
 
+  const loadTools = () => fetchTools().then(setTools).catch(console.error);
+
   useEffect(() => {
-    setTools(getTools());
+    loadTools();
+    window.addEventListener('mhc_tools_updated', loadTools);
+    return () => window.removeEventListener('mhc_tools_updated', loadTools);
   }, []);
 
   const showToast = (msg, type = 'success') => {
@@ -181,108 +59,130 @@ export default function Admin() {
     setTimeout(() => setToast(null), 2800);
   };
 
-  const persist = (updated) => {
-    saveTools(updated);
-    setTools(updated);
-    window.dispatchEvent(new Event('mhc_tools_updated'));
-  };
-
-  const handleSave = (data) => {
-    const exists = tools.find(t => t.id === data.id);
-    const updated = exists
-      ? tools.map(t => t.id === data.id ? data : t)
-      : [...tools, data];
-    persist(updated);
-    setModal(null);
-    showToast(exists ? `Đã cập nhật "${data.name}"` : `Đã thêm "${data.name}"`);
-  };
-
-  const handleDelete = (id) => {
-    const tool = tools.find(t => t.id === id);
-    persist(tools.filter(t => t.id !== id));
+  const handleDelete = async (id) => {
+    const t = tools.find(t => t.id === id);
+    await deleteTool(id);
     setConfirmId(null);
-    showToast(`Đã xóa "${tool?.name}"`, 'error');
+    loadTools();
+    window.dispatchEvent(new Event('mhc_tools_updated'));
+    showToast(`Đã xóa "${t?.name}"`, 'error');
   };
 
-  const filtered = tools.filter(t => t.category === activeTab);
+  const filtered    = navKey === 'all' ? tools : tools.filter(t => t.category === navKey);
+  const activeNav   = NAV.find(n => n.key === navKey);
   const confirmTool = tools.find(t => t.id === confirmId);
 
-  return (
-    <div className="admin">
-      {/* Top bar */}
-      <header className="admin__topbar">
-        <a href="#" className="admin__back" onClick={() => { window.location.hash = ''; }}>
-          <ArrowLeft size={16} /> Về trang chủ
-        </a>
-        <span className="admin__brand">MHC Admin</span>
-        <span className="admin__subtitle">Quản lý Tool Reviews</span>
-      </header>
+  const totalReviews = tools.reduce((s, t) => s + t.reviews, 0);
+  const avgRating    = tools.length ? (tools.reduce((s, t) => s + t.rating, 0) / tools.length).toFixed(1) : '–';
 
-      <main className="admin__main container">
-        {/* Category tabs */}
-        <div className="admin__tabs">
-          {CATEGORIES.map(cat => {
-            const count = tools.filter(t => t.category === cat).length;
-            return (
-              <button
-                key={cat}
-                className={`admin__tab${activeTab === cat ? ' admin__tab--active' : ''}`}
-                onClick={() => setActiveTab(cat)}
-              >
-                {cat}
-                <span className="admin__tab-count">{count}</span>
-              </button>
-            );
-          })}
+  return (
+    <div className="adm">
+      <aside className="adm__sidebar">
+        <div className="adm__logo">
+          <span className="adm__logo-mark">MHC</span>
+          <span className="adm__logo-sub">Admin</span>
         </div>
 
-        {/* Table header */}
-        <div className="admin__table-header">
-          <h3 className="admin__table-title">{activeTab} <span>({filtered.length} tool)</span></h3>
-          <button className="btn-admin btn-admin--primary" onClick={() => setModal({ category: activeTab })}>
-            <Plus size={15} /> Thêm tool
+        <nav className="adm__nav">
+          <span className="adm__nav-label">MENU</span>
+          {NAV.map(n => (
+            <button
+              key={n.key}
+              className={`adm__nav-item${navKey === n.key ? ' adm__nav-item--active' : ''}`}
+              onClick={() => setNavKey(n.key)}
+            >
+              <span className="adm__nav-icon">{n.icon}</span>
+              <span>{n.label}</span>
+              {navKey === n.key && <ChevronRight size={13} className="adm__nav-arrow" />}
+            </button>
+          ))}
+        </nav>
+
+        <div className="adm__user">
+          <span className="adm__username">{getUser()}</span>
+        </div>
+        <div className="adm__sidebar-footer">
+          <button className="adm__logout" onClick={() => navigate('/')}>
+            <LogOut size={15} /> Trang chủ
+          </button>
+          <button className="adm__logout adm__logout--danger" onClick={() => { clearAuth(); navigate('/login'); }}>
+            <LogOut size={15} /> Đăng xuất
           </button>
         </div>
+      </aside>
 
-        {/* Table */}
-        <div className="admin__table-wrap">
-          <table className="admin__table">
+      <div className="adm__main">
+        <header className="adm__topbar">
+          <div>
+            <h1 className="adm__page-title">{activeNav?.label ?? 'Dashboard'}</h1>
+            <p className="adm__page-sub">Quản lý danh sách tool reviews</p>
+          </div>
+          <button className="btn-a btn-a--primary" onClick={() => navigate('/admin/add')}>
+            <Plus size={15} /> Thêm tool
+          </button>
+        </header>
+
+        <div className="adm__stats">
+          <div className="adm__stat-card">
+            <span className="adm__stat-label">Tổng tool</span>
+            <span className="adm__stat-value">{tools.length}</span>
+          </div>
+          <div className="adm__stat-card">
+            <span className="adm__stat-label">Danh mục</span>
+            <span className="adm__stat-value">{CATEGORIES.length}</span>
+          </div>
+          <div className="adm__stat-card">
+            <span className="adm__stat-label">Tổng đánh giá</span>
+            <span className="adm__stat-value">{(totalReviews / 1000).toFixed(0)}k+</span>
+          </div>
+          <div className="adm__stat-card">
+            <span className="adm__stat-label">Rating TB</span>
+            <span className="adm__stat-value adm__stat-value--accent">{avgRating} <Star size={16} fill="#f59e0b" color="#f59e0b" /></span>
+          </div>
+        </div>
+
+        <div className="adm__card">
+          <div className="adm__card-header">
+            <span className="adm__card-title">
+              {navKey === 'all' ? 'Tất cả tool' : navKey}
+              <span className="adm__card-count">{filtered.length}</span>
+            </span>
+          </div>
+          <table className="adm__table">
             <thead>
               <tr>
                 <th>Logo</th>
-                <th>Tên</th>
+                <th>Tên tool</th>
                 <th>Danh mục</th>
-                <th>Đánh giá</th>
-                <th>Lượt review</th>
+                <th>Rating</th>
+                <th>Lượt đánh giá</th>
                 <th>Thao tác</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 && (
-                <tr><td colSpan={6} className="admin__empty">Chưa có tool nào. Thêm mới ngay!</td></tr>
+                <tr><td colSpan={6} className="adm__empty">Chưa có tool nào trong danh mục này.</td></tr>
               )}
               {filtered.map(tool => (
                 <tr key={tool.id}>
-                  <td><ToolLogo tool={tool} size={44} /></td>
-                  <td className="admin__cell-name">{tool.name}</td>
-                  <td><span className="admin__badge">{tool.category}</span></td>
+                  <td><ToolLogo tool={tool} size={40} /></td>
+                  <td className="adm__cell-name">{tool.name}</td>
+                  <td><span className="adm__badge">{tool.category}</span></td>
                   <td>
-                    <div className="admin__stars">
-                      {[1,2,3,4,5].map(i => (
-                        <Star key={i} size={13} fill={i <= Math.round(tool.rating) ? '#f59e0b' : 'none'} color={i <= Math.round(tool.rating) ? '#f59e0b' : '#d1d5db'} />
-                      ))}
-                      <span className="admin__rating-num">{tool.rating}</span>
+                    <div className="adm__rating">
+                      <div className="adm__stars">
+                        {[1,2,3,4,5].map(i => (
+                          <Star key={i} size={12} fill={i <= Math.round(tool.rating) ? '#f59e0b' : 'none'} color={i <= Math.round(tool.rating) ? '#f59e0b' : '#d1d5db'} />
+                        ))}
+                      </div>
+                      <span className="adm__rating-num">{tool.rating}</span>
                     </div>
                   </td>
-                  <td className="admin__cell-reviews">{tool.reviews.toLocaleString()}</td>
+                  <td className="adm__cell-muted">{tool.reviews.toLocaleString()}</td>
                   <td>
-                    <div className="admin__actions">
-                      <button className="admin__btn-icon admin__btn-icon--edit" onClick={() => setModal(tool)} title="Sửa">
-                        <Pencil size={15} />
-                      </button>
-                      <button className="admin__btn-icon admin__btn-icon--delete" onClick={() => setConfirmId(tool.id)} title="Xóa">
-                        <Trash2 size={15} />
-                      </button>
+                    <div className="adm__row-actions">
+                      <button className="adm__icon-btn adm__icon-btn--edit" onClick={() => navigate(`/admin/edit/${tool.id}`)} title="Sửa"><Pencil size={14} /></button>
+                      <button className="adm__icon-btn adm__icon-btn--del" onClick={() => setConfirmId(tool.id)} title="Xóa"><Trash2 size={14} /></button>
                     </div>
                   </td>
                 </tr>
@@ -290,14 +190,10 @@ export default function Admin() {
             </tbody>
           </table>
         </div>
-      </main>
+      </div>
 
-      {modal && <Modal tool={modal?.id ? modal : { ...EMPTY_FORM, ...modal }} onClose={() => setModal(null)} onSave={handleSave} />}
-      {confirmId && <ConfirmDialog name={confirmTool?.name} onConfirm={() => handleDelete(confirmId)} onCancel={() => setConfirmId(null)} />}
-
-      {toast && (
-        <div className={`admin__toast admin__toast--${toast.type}`}>{toast.msg}</div>
-      )}
+      {confirmId && <Confirm name={confirmTool?.name} onConfirm={() => handleDelete(confirmId)} onCancel={() => setConfirmId(null)} />}
+      {toast && <div className={`adm__toast adm__toast--${toast.type}`}>{toast.msg}</div>}
     </div>
   );
 }

@@ -1,0 +1,110 @@
+{
+  "chatgpt": {
+    "tagline": "Trợ lý AI mạnh mẽ nhất thế giới từ OpenAI",
+    "website": "https://chat.openai.com",
+    "pricing": "Miễn phí / $20/tháng (Plus)",
+    "founded": "2022",
+    "description": "ChatGPT là mô hình ngôn ngữ lớn do OpenAI phát triển, có khả năng viết lách, phân tích, lập trình và trả lời hàng triệu câu hỏi theo ngữ cảnh tự nhiên. Với GPT-4, ChatGPT đã trở thành công cụ AI phổ biến nhất thế giới, được sử dụng rộng rãi trong doanh nghiệp, giáo dục và sáng tạo nội dung.",
+    "pros": [
+      "Hiểu ngữ cảnh cực kỳ tốt, phản hồi tự nhiên như con người",
+      "Hỗ trợ đa ngôn ngữ bao gồm tiếng Việt",
+      "Tích hợp plugin và API mạnh mẽ cho doanh nghiệp",
+      "Cập nhật kiến thức liên tục qua web browsing"
+    ],
+    "cons": [
+      "Phiên bản miễn phí bị giới hạn truy cập GPT-4",
+      "Đôi khi tạo ra thông tin sai sự thật (hallucination)",
+      "Chi phí API khá cao với dự án lớn"
+    ],
+    "features": [
+      {
+        "title": "Viết & Chỉnh sửa nội dung",
+        "desc": "Tạo bài viết, email, báo cáo và copy marketing chuyên nghiệp chỉ trong vài giây."
+      },
+      {
+        "title": "Phân tích & Tóm tắt dữ liệu",
+        "desc": "Đọc hiểu tài liệu dài, tóm tắt ý chính và trích xuất thông tin quan trọng."
+      },
+      {
+        "title": "Lập trình & Debug code",
+        "desc": "Hỗ trợ 20+ ngôn ngữ lập trình, giải thích code và tìm lỗi tự động."
+      },
+      {
+        "title": "Plugins & Custom GPTs",
+        "desc": "Tích hợp hàng nghìn plugin bên thứ ba và tạo GPT tùy chỉnh cho workflow riêng."
+      }
+    ],
+    "faqs": [
+      {
+        "q": "ChatGPT có miễn phí không?",
+        "a": "Có, ChatGPT có gói miễn phí với GPT-3.5. Gói Plus ($20/tháng) cho phép truy cập GPT-4 và các tính năng nâng cao."
+      },
+      {
+        "q": "ChatGPT có hỗ trợ tiếng Việt không?",
+        "a": "Có, ChatGPT hỗ trợ tiếng Việt khá tốt, đặc biệt từ GPT-4 trở lên. Chất lượng phản hồi tiếng Việt ngày càng được cải thiện."
+      },
+      {
+        "q": "Dữ liệu nhập vào ChatGPT có an toàn không?",
+        "a": "OpenAI có chính sách bảo mật rõ ràng. Người dùng có thể tắt lịch sử chat và dữ liệu sẽ không được dùng để huấn luyện mô hình."
+      }
+    ],
+    "userReviews": [
+      {
+        "name": "Nguyễn Văn Minh",
+        "role": "Content Manager, Hà Nội",
+        "rating": 5,
+        "comment": "ChatGPT đã thay đổi hoàn toàn workflow của team tôi. Thời gian viết content giảm 60%, chất lượng vẫn đảm bảo.",
+        "date": "Tháng 3, 2025"
+      },
+      {
+        "name": "Trần Thị Lan",
+        "role": "Developer, TP.HCM",
+        "rating": 5,
+        "comment": "Debug code với ChatGPT nhanh hơn Google rất nhiều. GPT-4 hiểu context tốt đến mức tôi không nghĩ một AI có thể làm được.",
+        "date": "Tháng 2, 2025"
+      },
+      {
+        "name": "Lê Quốc Bảo",
+        "role": "Marketing Director",
+        "rating": 4,
+        "comment": "Tuyệt vời cho brainstorming và research. Đôi khi hallucinate nhưng nhìn chung rất đáng tin cậy với các task thông thường.",
+        "date": "Tháng 1, 2025"
+      }
+    ]
+  },
+  "mos1sk67cw5r": {
+    "tagline": "",
+    "website": "",
+    "pricing": "",
+    "founded": "",
+    "description": "",
+    "pros": [
+      "",
+      ""
+    ],
+    "cons": [
+      ""
+    ],
+    "features": [
+      {
+        "title": "",
+        "desc": ""
+      }
+    ],
+    "faqs": [
+      {
+        "q": "",
+        "a": ""
+      }
+    ],
+    "userReviews": [
+      {
+        "name": "",
+        "role": "",
+        "rating": 5,
+        "comment": "",
+        "date": ""
+      }
+    ]
+  }
+}

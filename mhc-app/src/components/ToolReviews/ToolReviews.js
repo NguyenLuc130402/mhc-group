@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Star, Cpu, Users, Grid, Megaphone, Search } from 'lucide-react';
-import { CATEGORIES, getTools, initTools } from '../../data/toolsData';
+import { CATEGORIES } from '../../data/toolsData';
+import { fetchTools } from '../../api/toolsApi';
 import './ToolReviews.css';
 
 const categoryIcons = {
@@ -38,6 +40,7 @@ function StarRating({ rating }) {
 }
 
 function ToolCard({ tool, index }) {
+  const navigate = useNavigate();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
   return (
@@ -48,6 +51,8 @@ function ToolCard({ tool, index }) {
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.35, delay: index * 0.06 }}
       whileHover={{ translateY: -5 }}
+      onClick={() => navigate(`/tool/${tool.id}`)}
+      style={{ cursor: 'pointer' }}
     >
       <div className="tool-card__logo-wrap">
         <ToolLogo tool={tool} size={80} />
@@ -66,11 +71,10 @@ export default function ToolReviews() {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   useEffect(() => {
-    initTools();
-    setAllTools(getTools());
-    const onStorage = () => setAllTools(getTools());
-    window.addEventListener('mhc_tools_updated', onStorage);
-    return () => window.removeEventListener('mhc_tools_updated', onStorage);
+    fetchTools().then(setAllTools).catch(console.error);
+    const onUpdate = () => fetchTools().then(setAllTools).catch(console.error);
+    window.addEventListener('mhc_tools_updated', onUpdate);
+    return () => window.removeEventListener('mhc_tools_updated', onUpdate);
   }, []);
 
   const filtered = allTools.filter(t => t.category === active);
