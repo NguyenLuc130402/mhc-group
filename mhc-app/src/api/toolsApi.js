@@ -1,6 +1,6 @@
 import { authHeader } from '../utils/auth';
 
-const BASE = 'http://localhost:5000/api';
+const BASE = 'https://mhc-api.onrender.com/api';
 
 export async function fetchTools() {
   const res = await fetch(`${BASE}/tools`);
