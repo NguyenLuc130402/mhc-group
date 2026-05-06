@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Star, Check, GripVertical, Upload, X } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Star, Check, GripVertical, Upload, X, Sparkles, ChevronDown, Copy, Download } from 'lucide-react';
 import { CATEGORIES, generateId } from '../data/toolsData';
 import { getEmptyDetail } from '../data/toolsDetail';
 import { fetchTools, createTool, updateTool, fetchToolDetail, saveToolDetail, uploadLogo } from '../api/toolsApi';
@@ -134,8 +134,43 @@ function ReviewList({ items, onChange }) {
   );
 }
 
+const AI_PROMPT = `Bạn là chuyên gia đánh giá phần mềm. Hãy tạo JSON đầy đủ cho công cụ [TÊN TOOL] theo format dưới đây. Trả về CHỈ JSON, không có text nào khác.
+
+{
+  "name": "Tên công cụ",
+  "category": "AI Tool",
+  "rating": 4.5,
+  "reviews": 10000,
+  "logoText": "AB",
+  "logoBg": "#f0f4ff",
+  "logoFill": "#4285F4",
+  "logoShape": "rounded",
+  "tagline": "Tagline ngắn gọn, hấp dẫn",
+  "website": "https://example.com",
+  "pricing": "Freemium / $20/tháng",
+  "founded": "2022",
+  "description": "Mô tả tổng quan 2–3 câu về công cụ.",
+  "pros": ["Ưu điểm 1", "Ưu điểm 2", "Ưu điểm 3"],
+  "cons": ["Nhược điểm 1", "Nhược điểm 2"],
+  "features": [
+    { "title": "Tên tính năng", "desc": "Mô tả tính năng ngắn gọn." }
+  ],
+  "faqs": [
+    { "q": "Câu hỏi thường gặp?", "a": "Câu trả lời." }
+  ],
+  "userReviews": [
+    { "name": "Nguyễn Văn A", "role": "Marketing Manager", "rating": 5, "comment": "Nhận xét của người dùng.", "date": "Tháng 5, 2025" }
+  ]
+}
+
+Lưu ý:
+- category phải là một trong: "AI Tool", "CRM Tool", "SaaS Platforms", "Marketing Tool", "SEO Tool" hãy lựa chọn ngẫu nhiên 1 trong 4 tool này 
+- rating từ 1.0 đến 5.0
+- logoText tối đa 4 ký tự viết hoa
+- logoBg và logoFill là mã hex màu phù hợp với thương hiệu tool`;
+
 const DEFAULT_BASIC = {
-  name: '', category: CATEGORIES[0], rating: 4.5, reviews: 1000,
+  name: '', category: '', rating: 4.5, reviews: 1000,
   logoUrl: '', logoBg: '#f0f4ff', logoFill: '#4285F4', logoText: '', logoShape: 'rounded', logoBgFill: '',
 };
 
@@ -151,6 +186,10 @@ export default function AdminToolForm() {
   const [saving,    setSaving]    = useState(false);
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
+  const [aiOpen,    setAiOpen]    = useState(false);
+  const [aiJson,    setAiJson]    = useState('');
+  const [aiError,   setAiError]   = useState('');
+  const [aiCopied,  setAiCopied]  = useState(false);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -178,6 +217,49 @@ export default function AdminToolForm() {
   const setB = (k, v) => setBasic(p => ({ ...p, [k]: v }));
   const setD = (k, v) => setDetail(p => ({ ...p, [k]: v }));
 
+  const handleCopyPrompt = () => {
+    navigator.clipboard.writeText(AI_PROMPT).then(() => {
+      setAiCopied(true);
+      setTimeout(() => setAiCopied(false), 2000);
+    });
+  };
+
+  const handleAiImport = () => {
+    setAiError('');
+    try {
+      const data = JSON.parse(aiJson);
+     // console.log(data)
+      setBasic(p => ({
+        ...p,
+        name:       data.name       || p.name,
+        category:   data.category   || p.category,
+        rating:     data.rating     ?? p.rating,
+        reviews:    data.reviews    ?? p.reviews,
+        logoText:   data.logoText   || p.logoText,
+        logoBg:     data.logoBg     || p.logoBg,
+        logoFill:   data.logoFill   || p.logoFill,
+        logoShape:  data.logoShape  || p.logoShape,
+      }));
+      setDetail(p => ({
+        ...p,
+        tagline:     data.tagline     || p.tagline,
+        website:     data.website     || p.website,
+        pricing:     data.pricing     || p.pricing,
+        founded:     data.founded     || p.founded,
+        description: data.description || p.description,
+        pros:        data.pros?.length        ? data.pros        : p.pros,
+        cons:        data.cons?.length        ? data.cons        : p.cons,
+        features:    data.features?.length    ? data.features    : p.features,
+        faqs:        data.faqs?.length        ? data.faqs        : p.faqs,
+        userReviews: data.userReviews?.length ? data.userReviews : p.userReviews,
+      }));
+      setAiJson('');
+      setAiOpen(false);
+    } catch {
+      setAiError('JSON không hợp lệ. Kiểm tra lại định dạng.');
+    }
+  };
+
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -197,6 +279,7 @@ export default function AdminToolForm() {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!basic.name.trim()) return;
+    if (!basic.category) return alert('Vui lòng chọn danh mục');
     if (!basic.logoUrl && !basic.logoText.trim()) return alert('Vui lòng upload ảnh logo hoặc nhập chữ logo');
     setSaving(true);
     try {
@@ -238,6 +321,60 @@ export default function AdminToolForm() {
 
       <form id="tool-form" className="af-layout container" onSubmit={handleSave}>
         <div className="af-left">
+          {/* AI Import */}
+          <div className="af-ai-box">
+            <button type="button" className="af-ai-box__toggle" onClick={() => setAiOpen(v => !v)}>
+              <span className="af-ai-box__toggle-left">
+                <Sparkles size={15} />
+                Nhập nhanh bằng AI
+                <span className="af-ai-box__badge">AI ASSISTED</span>
+              </span>
+              <ChevronDown size={15} className={`af-ai-box__chevron${aiOpen ? ' af-ai-box__chevron--open' : ''}`} />
+            </button>
+
+            {aiOpen && (
+              <div className="af-ai-box__body">
+                <div className="af-ai-step">
+                  <span className="af-ai-step__num">1</span>
+                  <div>
+                    <p className="af-ai-step__title">Copy prompt → paste vào ChatGPT / Claude</p>
+                    <p className="af-ai-step__sub">Copy prompt bên dưới, paste vào AI cùng với thông tin tool để tạo JSON.</p>
+                    <button type="button" className="af-ai-copy-btn" onClick={handleCopyPrompt}>
+                      <Copy size={13} /> {aiCopied ? 'Đã copy!' : 'Copy Prompt cho AI'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="af-ai-step">
+                  <span className="af-ai-step__num">2</span>
+                  <div style={{ width: '100%' }}>
+                    <p className="af-ai-step__title">Paste JSON từ AI vào đây</p>
+                    <textarea
+                      className="af-ai-textarea"
+                      rows={8}
+                      value={aiJson}
+                      onChange={e => { setAiJson(e.target.value); setAiError(''); }}
+                      placeholder={'Paste JSON mà AI đã tạo vào đây...\n\nVí dụ:\n{\n  "name": "ChatGPT",\n  "category": "AI Tool",\n  ...\n}'}
+                    />
+                    {aiError && <p className="af-ai-error">{aiError}</p>}
+                  </div>
+                </div>
+
+                <div className="af-ai-step">
+                  <span className="af-ai-step__num">3</span>
+                  <div>
+                    <p className="af-ai-step__title">Kiểm tra & Import</p>
+                    <div className="af-ai-actions">
+                      <button type="button" className="af-ai-import-btn" onClick={handleAiImport} disabled={!aiJson.trim()}>
+                        <Download size={13} /> Import vào Form
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="af-card">
             <h2 className="af-card__title">Thông tin cơ bản</h2>
             <Field label="Tên tool" required>
@@ -358,7 +495,8 @@ export default function AdminToolForm() {
           <div className="af-card af-card--sidebar">
             <h3 className="af-card__title">Phân loại</h3>
             <Field label="Danh mục">
-              <select className="af-input" value={basic.category} onChange={e => setB('category', e.target.value)}>
+              <select className="af-input" value={basic.category} onChange={e => setB('category', e.target.value)} required>
+                <option value="" disabled>-- Chọn danh mục --</option>
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
             </Field>

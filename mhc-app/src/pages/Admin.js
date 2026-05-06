@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Star, Cpu, Users, Grid, Megaphone, Search,
-  Plus, Pencil, Trash2, X, LogOut, ChevronRight
+  Plus, Pencil, Trash2, X, LogOut, ChevronRight, Package, FolderOpen, Settings, ArrowRight, CheckCircle2, BarChart3
 } from 'lucide-react';
 import { CATEGORIES } from '../data/toolsData';
 import { fetchTools, deleteTool } from '../api/toolsApi';
@@ -124,22 +124,75 @@ export default function Admin() {
 
         <div className="adm__stats">
           <div className="adm__stat-card">
-            <span className="adm__stat-label">Tổng tool</span>
-            <span className="adm__stat-value">{tools.length}</span>
+            <div className="adm__stat-body">
+              <span className="adm__stat-label">Tổng tool</span>
+              <span className="adm__stat-value">{tools.length}</span>
+            </div>
+            <div className="adm__stat-icon adm__stat-icon--blue"><Package size={20} /></div>
           </div>
           <div className="adm__stat-card">
-            <span className="adm__stat-label">Danh mục</span>
-            <span className="adm__stat-value">{CATEGORIES.length}</span>
+            <div className="adm__stat-body">
+              <span className="adm__stat-label">Danh mục</span>
+              <span className="adm__stat-value">{CATEGORIES.length}</span>
+            </div>
+            <div className="adm__stat-icon adm__stat-icon--green"><FolderOpen size={20} /></div>
           </div>
           <div className="adm__stat-card">
-            <span className="adm__stat-label">Tổng đánh giá</span>
-            <span className="adm__stat-value">{(totalReviews / 1000).toFixed(0)}k+</span>
+            <div className="adm__stat-body">
+              <span className="adm__stat-label">Tổng đánh giá</span>
+              <span className="adm__stat-value">{(totalReviews / 1000).toFixed(0)}k+</span>
+            </div>
+            <div className="adm__stat-icon adm__stat-icon--orange"><BarChart3 size={20} /></div>
           </div>
           <div className="adm__stat-card">
-            <span className="adm__stat-label">Rating TB</span>
-            <span className="adm__stat-value adm__stat-value--accent">{avgRating} <Star size={16} fill="#f59e0b" color="#f59e0b" /></span>
+            <div className="adm__stat-body">
+              <span className="adm__stat-label">Rating TB</span>
+              <span className="adm__stat-value">{avgRating}</span>
+            </div>
+            <div className="adm__stat-icon adm__stat-icon--yellow"><Star size={20} /></div>
           </div>
         </div>
+
+        {navKey === 'all' && (
+          <div className="adm__mid">
+            <div className="adm__quick">
+              <span className="adm__section-label">QUICK ACTIONS</span>
+              {[
+                { icon: <Plus size={17} />, label: 'Thêm tool mới',   action: () => navigate('/admin/add') },
+                { icon: <Package size={17} />, label: 'Quản lý tools', action: () => document.querySelector('.adm__card')?.scrollIntoView({ behavior: 'smooth' }) },
+                { icon: <FolderOpen size={17} />, label: 'Xem theo danh mục', action: () => setNavKey('AI Tool') },
+                { icon: <Settings size={17} />, label: 'Trang Review', action: () => navigate('/reviews') },
+              ].map((item, i) => (
+                <button key={i} className="adm__quick-item" onClick={item.action}>
+                  <span className="adm__quick-icon">{item.icon}</span>
+                  <span className="adm__quick-label">{item.label}</span>
+                  <ArrowRight size={14} className="adm__quick-arrow" />
+                </button>
+              ))}
+            </div>
+
+            <div className="adm__recent">
+              <div className="adm__recent-header">
+                <span className="adm__section-label">RECENT PRODUCTS</span>
+                <button className="adm__recent-viewall" onClick={() => document.querySelector('.adm__card')?.scrollIntoView({ behavior: 'smooth' })}>
+                  View all
+                </button>
+              </div>
+              <div className="adm__recent-list">
+                {[...tools].reverse().slice(0, 5).map(tool => (
+                  <div key={tool.id} className="adm__recent-item" onClick={() => navigate(`/admin/edit/${tool.id}`)}>
+                    <ToolLogo tool={tool} size={40} />
+                    <div className="adm__recent-info">
+                      <span className="adm__recent-name">{tool.name}</span>
+                      <span className="adm__recent-meta">{tool.rating} stars · {tool.reviews.toLocaleString()} reviews</span>
+                    </div>
+                    <span className="adm__recent-badge"><CheckCircle2 size={11} /> Published</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="adm__card">
           <div className="adm__card-header">

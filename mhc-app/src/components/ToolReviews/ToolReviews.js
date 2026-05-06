@@ -72,7 +72,7 @@ function ToolCard({ tool, index }) {
   );
 }
 
-export default function ToolReviews() {
+export default function ToolReviews({ searchQuery = '' }) {
   const [active, setActive] = useState(CATEGORIES[0]);
   const [allTools, setAllTools] = useState([]);
   const ref = useRef(null);
@@ -85,7 +85,10 @@ export default function ToolReviews() {
     return () => window.removeEventListener('mhc_tools_updated', onUpdate);
   }, []);
 
-  const filtered = allTools.filter(t => t.category === active);
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = q
+    ? allTools.filter(t => t.name.toLowerCase().includes(q) || t.category.toLowerCase().includes(q))
+    : allTools.filter(t => t.category === active);
 
   return (
     <section className="tool-reviews">
@@ -106,36 +109,39 @@ export default function ToolReviews() {
           </p>
         </motion.div>
 
-        <motion.div
-          className="tool-reviews__tabs"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              className={`tool-reviews__tab${active === cat ? ' tool-reviews__tab--active' : ''}`}
-              onClick={() => setActive(cat)}
-            >
-              {categoryIcons[cat]}
-              {cat}
-            </button>
-          ))}
-        </motion.div>
+        {!q && (
+          <motion.div
+            className="tool-reviews__tabs"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                className={`tool-reviews__tab${active === cat ? ' tool-reviews__tab--active' : ''}`}
+                onClick={() => setActive(cat)}
+              >
+                {categoryIcons[cat]}
+                {cat}
+              </button>
+            ))}
+          </motion.div>
+        )}
 
         <AnimatePresence mode="wait">
           <motion.div
-            key={active}
+            key={q || active}
             className="tool-reviews__grid"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.22 }}
           >
-            {filtered.map((tool, i) => (
-              <ToolCard key={tool.id} tool={tool} index={i} />
-            ))}
+            {filtered.length > 0
+              ? filtered.map((tool, i) => <ToolCard key={tool.id} tool={tool} index={i} />)
+              : <p style={{ color: '#94a3b8', fontSize: 14, gridColumn: '1/-1' }}>Không tìm thấy công cụ nào.</p>
+            }
           </motion.div>
         </AnimatePresence>
       </div>

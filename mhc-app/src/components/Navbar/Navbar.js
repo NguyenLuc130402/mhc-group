@@ -28,10 +28,11 @@ const serviceGroups = [
 ];
 
 const links = [
-  { label: 'Trang chủ', href: '#top' },
+  { label: 'Trang chủ', href: '/'},
   { label: 'Giới thiệu', href: '#about' },
   { label: 'Dịch vụ', href: '#services', dropdown: true },
   { label: 'Văn hóa', href: '#culture' },
+  { label: 'Review', href: '/reviews', external: true },
   { label: 'Blog', href: '#blog' },
   { label: 'Tuyển Dụng', href: '#careers' },
 ];

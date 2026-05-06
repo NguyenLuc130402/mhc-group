@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import logo from '../../assets/images/LogoMHC.png';
 import './Footer.css';
 
@@ -56,6 +58,23 @@ const socials = [
   },
 ];
 
+function FooterCol({ col }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="footer__col">
+      <button className="footer__col-toggle" onClick={() => setOpen(v => !v)}>
+        <span className="footer__col-heading">{col.heading}</span>
+        <ChevronDown size={15} className={`footer__col-chevron${open ? ' footer__col-chevron--open' : ''}`} />
+      </button>
+      <ul className={`footer__col-links${open ? ' footer__col-links--open' : ''}`}>
+        {col.links.map(l => (
+          <li key={l}><a href="#top" className="footer__col-link">{l}</a></li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function Footer() {
   return (
     <footer className="footer">
@@ -88,14 +107,7 @@ export default function Footer() {
         </div>
 
         {navCols.map(col => (
-          <div key={col.heading} className="footer__col">
-            <span className="footer__col-heading">{col.heading}</span>
-            <ul className="footer__col-links">
-              {col.links.map(l => (
-                <li key={l}><a href="#top" className="footer__col-link">{l}</a></li>
-              ))}
-            </ul>
-          </div>
+          <FooterCol key={col.heading} col={col} />
         ))}
       </div>
 
