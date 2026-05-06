@@ -5,14 +5,15 @@ import img2 from '../../assets/team-image/z7792508427042_66e65ce160b76e896177eba
 import img3 from '../../assets/team-image/z7792501428848_fce4a81695469ddabe59b277964f8b5c.jpg';
 import img4 from '../../assets/team-image/z7792499492102_87d37fcea202e05367652a0a61fd31ea.jpg';
 import img5 from '../../assets/team-image/z7792498246382_bac2b086fd89fb717ca5ebd5209c6afe.jpg';
+import { useLang } from '../../contexts/LangContext';
 import './Team.css';
 
-const MEMBERS = [
-  { img: img1, name: 'Nguyễn Văn A',  title: 'CEO & Co-Founder',    bio: 'Dẫn dắt bằng tầm nhìn, xây dựng bằng đam mê.' },
-  { img: img2, name: 'Trần Hữu B',   title: 'Marketing Director',  bio: 'Chuyên gia tối ưu hóa chuyển đổi.' },
-  { img: img3, name: 'Lê Minh C',   title: 'Lead Developer',      bio: 'Xây dựng hệ thống bằng sự tử tế.' },
-  { img: img4, name: 'Phạm Thu D',   title: 'SEO Strategist',      bio: 'Biến traffic thành lợi nhuận thực sự.' },
-  { img: img5, name: 'Hoàng Văn E',    title: 'Data Analyst',        bio: 'Mọi quyết định đều bắt đầu từ dữ liệu.' },
+const MEMBER_STATIC = [
+  { img: img3, name: 'Nguyễn Mạnh',  title: 'CEO & Co-Founder'    },
+  { img: img2, name: 'Trần Hữu B',    title: 'Marketing Director'  },
+  { img: img1, name: 'Lê Minh C',     title: 'Lead Developer'      },
+  { img: img4, name: 'Phạm Thu D',    title: 'SEO Strategist'      },
+  { img: img5, name: 'Hoàng Văn E',   title: 'Data Analyst'        },
 ];
 
 function MemberCard({ member, index }) {
@@ -44,8 +45,13 @@ function MemberCard({ member, index }) {
 }
 
 export default function Team() {
+  const { t } = useLang();
   const ref    = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  const memberBios = t('team.members');
+  const members = MEMBER_STATIC.map((m, i) => ({ ...m, bio: memberBios[i]?.bio || m.bio }));
+
   return (
     <section className="team">
       <div className="container">
@@ -56,17 +62,16 @@ export default function Team() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
         >
-          <span className="section-label">Đội ngũ</span>
+          <span className="section-label">{t('team.label')}</span>
           <h2 className="team__heading">
-            Con người đứng sau<br />những con số
+            {t('team.headingLine1')}<br />
+            {t('team.headingLine2')}
           </h2>
-          <p className="team__sub">
-            Chúng tôi là những chuyên gia tận tâm, kết hợp dữ liệu và sáng tạo để mang lại kết quả thực sự cho khách hàng.
-          </p>
+          <p className="team__sub">{t('team.sub')}</p>
         </motion.div>
 
         <div className="team__grid">
-          {MEMBERS.map((m, i) => (
+          {members.map((m, i) => (
             <MemberCard key={i} member={m} index={i} />
           ))}
         </div>

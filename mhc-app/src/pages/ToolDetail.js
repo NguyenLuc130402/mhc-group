@@ -5,6 +5,8 @@ import { fetchTools, fetchToolDetail } from '../api/toolsApi';
 import { ToolLogo } from '../components/ToolReviews/ToolReviews';
 import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/Footer/Footer';
+import ChatBubble from '../components/ChatBubble/ChatBubble';
+import { useLang } from '../contexts/LangContext';
 import './ToolDetail.css';
 
 function Stars({ rating, size = 16 }) {
@@ -45,6 +47,7 @@ function FAQ({ items }) {
 }
 
 export default function ToolDetail() {
+  const { t } = useLang();
   const navigate = useNavigate();
   const { id: toolId } = useParams();
   const [tool,   setTool]   = useState(null);
@@ -55,10 +58,10 @@ export default function ToolDetail() {
   useEffect(() => {
     Promise.all([fetchTools(), fetchToolDetail(toolId)])
       .then(([tools, det]) => {
-        const found = tools.find(t => t.id === toolId);
+        const found = tools.find(tl => tl.id === toolId);
         setTool(found || null);
         setDetail(det);
-        if (found) setRelatedTools(tools.filter(t => t.category === found.category && t.id !== toolId).slice(0, 4));
+        if (found) setRelatedTools(tools.filter(tl => tl.category === found.category && tl.id !== toolId).slice(0, 4));
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -67,7 +70,7 @@ export default function ToolDetail() {
   if (loading) return (
     <>
       <Navbar />
-      <div style={{ padding: '120px 24px', textAlign: 'center', color: '#6b7280' }}>Đang tải...</div>
+      <div style={{ padding: '120px 24px', textAlign: 'center', color: '#6b7280' }}>{t('toolDetail.loading')}</div>
       <Footer />
     </>
   );
@@ -76,18 +79,19 @@ export default function ToolDetail() {
     <>
       <Navbar />
       <div style={{ padding: '120px 24px', textAlign: 'center' }}>
-        <p style={{ color: '#6b7280' }}>Không tìm thấy tool này.</p>
-        <button onClick={() => navigate('/')} style={{ marginTop: 16, cursor: 'pointer' }}>← Về trang chủ</button>
+        <p style={{ color: '#6b7280' }}>{t('toolDetail.notFound')}</p>
+        <button onClick={() => navigate('/')} style={{ marginTop: 16, cursor: 'pointer' }}>{t('toolDetail.backHome')}</button>
       </div>
       <Footer />
     </>
   );
 
+  const ratingLabels = t('toolDetail.ratingBreakdown');
   const ratingBreakdown = [
-    { label: 'Tính năng',   value: Math.min(5, tool.rating + 0.1) },
-    { label: 'Dễ sử dụng', value: Math.max(3.5, tool.rating - 0.2) },
-    { label: 'Hỗ trợ KH',  value: Math.max(3.8, tool.rating - 0.1) },
-    { label: 'Giá trị',    value: Math.max(3.6, tool.rating - 0.3) },
+    { label: ratingLabels[0], value: Math.min(5, tool.rating + 0.1) },
+    { label: ratingLabels[1], value: Math.max(3.5, tool.rating - 0.2) },
+    { label: ratingLabels[2], value: Math.max(3.8, tool.rating - 0.1) },
+    { label: ratingLabels[3], value: Math.max(3.6, tool.rating - 0.3) },
   ];
 
   return (
@@ -96,7 +100,7 @@ export default function ToolDetail() {
       <div className="td-page">
         <div className="td-breadcrumb container">
           <button className="td-back" onClick={() => navigate('/')}>
-            <ArrowLeft size={14} /> Trang chủ
+            <ArrowLeft size={14} /> {t('toolDetail.backLabel')}
           </button>
           <span className="td-breadcrumb__sep">/</span>
           <span className="td-breadcrumb__cat">{tool.category}</span>
@@ -115,26 +119,26 @@ export default function ToolDetail() {
                   <div className="td-hero-card__rating">
                     <Stars rating={tool.rating} />
                     <span className="td-hero-card__score">{tool.rating}</span>
-                    <span className="td-hero-card__count">({tool.reviews.toLocaleString()} đánh giá)</span>
+                    <span className="td-hero-card__count">({tool.reviews.toLocaleString()} {t('toolDetail.reviews')})</span>
                   </div>
                 </div>
               </div>
               <p className="td-hero-card__desc">{detail.description}</p>
               <div className="td-hero-card__actions">
                 <a href={detail.website} target="_blank" rel="noopener noreferrer" className="btn-primary td-btn-visit">
-                  Truy cập {tool.name} <ExternalLink size={14} />
+                  {t('toolDetail.visit')} {tool.name} <ExternalLink size={14} />
                 </a>
                 <button className="td-btn-secondary" onClick={() => navigate('/')}>
-                  Tư vấn miễn phí
+                  {t('toolDetail.consultBtn')}
                 </button>
               </div>
             </div>
 
             <div className="td-section">
-              <h2 className="td-section__title">Ưu & Nhược điểm</h2>
+              <h2 className="td-section__title">{t('toolDetail.proscons')}</h2>
               <div className="td-proscons">
                 <div className="td-pros">
-                  <span className="td-pros__heading">Ưu điểm</span>
+                  <span className="td-pros__heading">{t('toolDetail.pros')}</span>
                   {detail.pros.map((p, i) => (
                     <div key={i} className="td-pros__item">
                       <Check size={15} className="td-pros__icon" /> {p}
@@ -142,7 +146,7 @@ export default function ToolDetail() {
                   ))}
                 </div>
                 <div className="td-cons">
-                  <span className="td-cons__heading">Nhược điểm</span>
+                  <span className="td-cons__heading">{t('toolDetail.cons')}</span>
                   {detail.cons.map((c, i) => (
                     <div key={i} className="td-cons__item">
                       <X size={15} className="td-cons__icon" /> {c}
@@ -153,7 +157,7 @@ export default function ToolDetail() {
             </div>
 
             <div className="td-section">
-              <h2 className="td-section__title">Tính năng nổi bật</h2>
+              <h2 className="td-section__title">{t('toolDetail.features')}</h2>
               <div className="td-features">
                 {detail.features.map((f, i) => (
                   <div key={i} className="td-feature">
@@ -168,12 +172,12 @@ export default function ToolDetail() {
             </div>
 
             <div className="td-section">
-              <h2 className="td-section__title">Đánh giá chi tiết</h2>
+              <h2 className="td-section__title">{t('toolDetail.detailRating')}</h2>
               <div className="td-rating-block">
                 <div className="td-rating-block__big">
                   <span className="td-rating-block__score">{tool.rating}</span>
                   <Stars rating={tool.rating} size={20} />
-                  <span className="td-rating-block__count">{tool.reviews.toLocaleString()} đánh giá</span>
+                  <span className="td-rating-block__count">{tool.reviews.toLocaleString()} {t('toolDetail.reviews')}</span>
                 </div>
                 <div className="td-rating-block__bars">
                   {ratingBreakdown.map(r => <RatingBar key={r.label} {...r} />)}
@@ -182,7 +186,7 @@ export default function ToolDetail() {
             </div>
 
             <div className="td-section">
-              <h2 className="td-section__title">Nhận xét từ người dùng</h2>
+              <h2 className="td-section__title">{t('toolDetail.userReviews')}</h2>
               <div className="td-reviews">
                 {detail.userReviews.map((r, i) => (
                   <div key={i} className="td-review">
@@ -204,57 +208,57 @@ export default function ToolDetail() {
             </div>
 
             <div className="td-section">
-              <h2 className="td-section__title">Câu hỏi thường gặp</h2>
+              <h2 className="td-section__title">{t('toolDetail.faq')}</h2>
               <FAQ items={detail.faqs} />
             </div>
           </div>
 
           <aside className="td-sidebar">
             <div className="td-info-card">
-              <h3 className="td-info-card__title">Thông tin nhanh</h3>
+              <h3 className="td-info-card__title">{t('toolDetail.quickInfo')}</h3>
               <div className="td-info-card__rows">
                 <div className="td-info-row">
                   <Globe size={15} className="td-info-row__icon" />
-                  <span className="td-info-row__label">Website</span>
+                  <span className="td-info-row__label">{t('toolDetail.website')}</span>
                   <a href={detail.website} target="_blank" rel="noopener noreferrer" className="td-info-row__val td-info-row__link">
                     {tool.name.toLowerCase().replace(/\s+/g, '')}.com
                   </a>
                 </div>
                 <div className="td-info-row">
                   <DollarSign size={15} className="td-info-row__icon" />
-                  <span className="td-info-row__label">Giá</span>
+                  <span className="td-info-row__label">{t('toolDetail.price')}</span>
                   <span className="td-info-row__val">{detail.pricing}</span>
                 </div>
                 <div className="td-info-row">
                   <Calendar size={15} className="td-info-row__icon" />
-                  <span className="td-info-row__label">Ra mắt</span>
+                  <span className="td-info-row__label">{t('toolDetail.launched')}</span>
                   <span className="td-info-row__val">{detail.founded}</span>
                 </div>
                 <div className="td-info-row">
                   <Star size={15} className="td-info-row__icon" />
-                  <span className="td-info-row__label">Rating</span>
+                  <span className="td-info-row__label">{t('toolDetail.rating')}</span>
                   <span className="td-info-row__val">{tool.rating} / 5.0</span>
                 </div>
               </div>
             </div>
 
             <div className="td-cta-card">
-              <p className="td-cta-card__label">Cần tư vấn?</p>
-              <h3 className="td-cta-card__title">MHC sẵn sàng giúp bạn chọn đúng công cụ</h3>
-              <p className="td-cta-card__sub">Liên hệ ngay để được tư vấn miễn phí từ chuyên gia.</p>
+              <p className="td-cta-card__label">{t('toolDetail.ctaLabel')}</p>
+              <h3 className="td-cta-card__title">{t('toolDetail.ctaTitle')}</h3>
+              <p className="td-cta-card__sub">{t('toolDetail.ctaSub')}</p>
               <button className="btn-primary td-cta-card__btn" onClick={() => navigate('/')}>
-                Liên hệ tư vấn
+                {t('toolDetail.ctaBtn')}
               </button>
             </div>
 
             <div className="td-category-card">
-              <h3 className="td-category-card__title">Danh mục: {tool.category}</h3>
+              <h3 className="td-category-card__title">{t('toolDetail.catLabel')} {tool.category}</h3>
               <div className="td-category-card__list">
-                {relatedTools.map(t => (
-                  <button key={t.id} className="td-category-card__item" onClick={() => navigate(`/tool/${t.id}`)}>
-                    <ToolLogo tool={t} size={32} />
-                    <span>{t.name}</span>
-                    <Stars rating={t.rating} size={11} />
+                {relatedTools.map(related => (
+                  <button key={related.id} className="td-category-card__item" onClick={() => navigate(`/tool/${related.id}`)}>
+                    <ToolLogo tool={related} size={32} />
+                    <span>{related.name}</span>
+                    <Stars rating={related.rating} size={11} />
                   </button>
                 ))}
               </div>
@@ -263,6 +267,7 @@ export default function ToolDetail() {
         </div>
       </div>
       <Footer />
+      <ChatBubble />
     </>
   );
 }

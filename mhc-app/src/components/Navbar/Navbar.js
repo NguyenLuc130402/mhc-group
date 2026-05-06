@@ -1,43 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown, TrendingUp, Users, BarChart2, Zap, Target, LineChart } from 'lucide-react';
 import logo from '../../assets/images/LogoMHC.png';
+import { useLang } from '../../contexts/LangContext';
 import './Navbar.css';
 
-const serviceGroups = [
-  {
-    heading: 'MARKETING DIGITAL',
-    items: [
-      { label: 'Google Ads', desc: 'Tối ưu chiến dịch Search, Display & YouTube Ads', icon: <TrendingUp size={18} />, href: '#services' },
-      { label: 'Lead Generation', desc: 'Thu hút và chuyển đổi khách hàng tiềm năng hiệu quả', icon: <Users size={18} />, href: '#services' },
-    ],
-  },
-  {
-    heading: 'PERFORMANCE',
-    items: [
-      { label: 'Affiliate Marketing', desc: 'Setup hệ thống affiliate, scale traffic & tối ưu conversion', icon: <Zap size={18} />, href: '#services' },
-      { label: 'Performance Marketing', desc: 'Funnel, landing page và đo lường chuyển đổi toàn diện', icon: <BarChart2 size={18} />, href: '#services' },
-    ],
-  },
-  {
-    heading: 'ANALYTICS & CRO',
-    items: [
-      { label: 'Conversion Tracking', desc: 'Theo dõi & phân tích từng điểm chạm trong hành trình mua hàng', icon: <Target size={18} />, href: '#services' },
-      { label: 'Báo cáo & Tối ưu', desc: 'Dashboard realtime, tối ưu liên tục theo dữ liệu thực', icon: <LineChart size={18} />, href: '#services' },
-    ],
-  },
-];
-
-const links = [
-  { label: 'Trang chủ', href: '/'},
-  { label: 'Giới thiệu', href: '#about' },
-  { label: 'Dịch vụ', href: '#services', dropdown: true },
-  { label: 'Văn hóa', href: '#culture' },
-  { label: 'Review', href: '/reviews', external: true },
-  { label: 'Blog', href: '#blog' },
-  { label: 'Tuyển Dụng', href: '#careers' },
+const ITEM_ICONS = [
+  [<TrendingUp size={18} />, <Users size={18} />],
+  [<Zap size={18} />, <BarChart2 size={18} />],
+  [<Target size={18} />, <LineChart size={18} />],
 ];
 
 export default function Navbar() {
+  const { lang, toggle, t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
@@ -47,6 +21,27 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const serviceGroups = t('navbar.serviceGroups').map((group, gi) => ({
+    heading: group.heading,
+    items: group.items.map((item, ii) => ({
+      ...item,
+      icon: ITEM_ICONS[gi][ii],
+      href: '#services',
+    })),
+  }));
+
+  const links = [
+    { label: t('navbar.home'), href: '/' },
+    { label: t('navbar.about'), href: '#about' },
+    { label: t('navbar.services'), href: '#services', dropdown: true },
+    { label: t('navbar.culture'), href: '#culture' },
+    { label: t('navbar.review'), href: '/reviews', external: true },
+    { label: t('navbar.blog'), href: '#blog' },
+    { label: t('navbar.careers'), href: '#careers' },
+  ];
+
+  const cta = t('navbar.dropdownCta');
 
   return (
     <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}`}>
@@ -86,10 +81,10 @@ export default function Navbar() {
                   </div>
                   <div className="navbar__dropdown-cta">
                     <div className="navbar__dropdown-cta-text">
-                      <span className="navbar__dropdown-cta-title">Tư vấn miễn phí</span>
-                      <span className="navbar__dropdown-cta-sub">Liên hệ để được hỗ trợ miễn phí</span>
+                      <span className="navbar__dropdown-cta-title">{cta.title}</span>
+                      <span className="navbar__dropdown-cta-sub">{cta.sub}</span>
                     </div>
-                    <a href="#contact" className="btn-primary navbar__dropdown-cta-btn">Liên hệ tư vấn</a>
+                    <a href="#contact" className="btn-primary navbar__dropdown-cta-btn">{cta.btn}</a>
                   </div>
                 </div>
               </div>
@@ -99,7 +94,11 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <a href="#contact" className="btn-primary navbar__cta">Liên hệ ngay</a>
+        <button className="navbar__lang-toggle" onClick={toggle} aria-label="Toggle language">
+          {lang === 'vi' ? 'EN' : 'VI'}
+        </button>
+
+        <a href="#contact" className="btn-primary navbar__cta">{t('navbar.contact')}</a>
 
         <button
           className="navbar__hamburger"
@@ -148,7 +147,7 @@ export default function Navbar() {
             </a>
           ))}
           <a href="#contact" className="btn-primary" onClick={() => setMenuOpen(false)}>
-            Liên hệ ngay
+            {t('navbar.contact')}
           </a>
         </div>
       )}

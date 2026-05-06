@@ -1,32 +1,21 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ArrowRight, Phone, Mail, MapPin } from 'lucide-react';
+import { useLang } from '../../contexts/LangContext';
 import './CTABanner.css';
 
-const contacts = [
-  {
-    icon: Phone,
-    label: 'Hotline',
-    value: '+84 376 015 024',
-    href: 'tel:+84376015024',
-  },
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'xbotteam37@gmail.com',
-    href: 'mailto:xbotteam37@gmail.com',
-  },
-  {
-    icon: MapPin,
-    label: 'Địa chỉ',
-    value: 'No. 88 Vo Thi Sau, Vinh City',
-    href: null,
-  },
+const CONTACT_DATA = [
+  { icon: Phone, value: '+84 376 015 024', href: 'tel:+84376015024' },
+  { icon: Mail,  value: 'xbotteam37@gmail.com', href: 'mailto:xbotteam37@gmail.com' },
+  { icon: MapPin, value: 'No. 88 Vo Thi Sau, Vinh City', href: null },
 ];
 
 export default function CTABanner() {
+  const { t } = useLang();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  const contactLabels = t('cta.contactLabels');
 
   return (
     <section className="cta-banner" id="contact">
@@ -48,7 +37,7 @@ export default function CTABanner() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Bắt đầu ngay hôm nay
+            {t('cta.badge')}
           </motion.span>
 
           <motion.h2
@@ -57,8 +46,8 @@ export default function CTABanner() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.15 }}
           >
-            Sẵn sàng tăng trưởng<br />
-            <span className="cta-banner__heading--accent">doanh thu thực sự?</span>
+            {t('cta.headingLine1')}<br />
+            <span className="cta-banner__heading--accent">{t('cta.headingLine2')}</span>
           </motion.h2>
 
           <motion.p
@@ -67,8 +56,7 @@ export default function CTABanner() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Liên hệ với chúng tôi để được tư vấn miễn phí. Đội ngũ chuyên gia MHC
-            luôn sẵn sàng đồng hành cùng bạn.
+            {t('cta.sub')}
           </motion.p>
 
           <motion.div
@@ -78,10 +66,10 @@ export default function CTABanner() {
             transition={{ duration: 0.5, delay: 0.25 }}
           >
             <a href="tel:+84376015024" className="btn-primary cta-banner__btn-primary">
-              Gọi ngay tư vấn miễn phí <ArrowRight size={16} />
+              {t('cta.btn1')} <ArrowRight size={16} />
             </a>
             <a href="mailto:xbotteam37@gmail.com" className="cta-banner__btn-ghost">
-              Gửi email cho chúng tôi
+              {t('cta.btn2')}
             </a>
           </motion.div>
 
@@ -91,13 +79,13 @@ export default function CTABanner() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.35 }}
           >
-            {contacts.map((c) => (
-              <div key={c.label} className="cta-banner__contact-card">
+            {CONTACT_DATA.map((c, i) => (
+              <div key={i} className="cta-banner__contact-card">
                 <div className="cta-banner__contact-icon">
                   <c.icon size={17} />
                 </div>
                 <div className="cta-banner__contact-body">
-                  <span className="cta-banner__contact-label">{c.label}</span>
+                  <span className="cta-banner__contact-label">{contactLabels[i]}</span>
                   {c.href ? (
                     <a href={c.href} className="cta-banner__contact-value cta-banner__contact-link">
                       {c.value}

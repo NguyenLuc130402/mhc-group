@@ -1,34 +1,10 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Search, Settings2, TrendingUp, BarChart2 } from 'lucide-react';
+import { useLang } from '../../contexts/LangContext';
 import './DarkFeature.css';
 
-const features = [
-  {
-    icon: Search,
-    title: 'Nghiên cứu & Targeting',
-    desc: 'Phân tích chuyên sâu đối tượng mục tiêu, từ khóa tiềm năng và đối thủ cạnh tranh để tối ưu chi phí.',
-    tag: 'Bước 01',
-  },
-  {
-    icon: Settings2,
-    title: 'Thiết lập Campaign',
-    desc: 'Cấu hình Google Ads, hệ thống Affiliate và tracking chuyển đổi chuẩn xác từ ngày đầu tiên.',
-    tag: 'Bước 02',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Tối ưu liên tục',
-    desc: 'A/B test nội dung quảng cáo, điều chỉnh bid strategy và tối ưu funnel để tăng conversion rate.',
-    tag: 'Bước 03',
-  },
-  {
-    icon: BarChart2,
-    title: 'Báo cáo & Scale',
-    desc: 'Dashboard real-time theo dõi ROI, chi phí và doanh thu — nhân rộng những gì hoạt động tốt nhất.',
-    tag: 'Bước 04',
-  },
-];
+const FEATURE_ICONS = [Search, Settings2, TrendingUp, BarChart2];
 
 function FeatureItem({ icon: Icon, title, desc, tag, index }) {
   const ref = useRef(null);
@@ -56,8 +32,14 @@ function FeatureItem({ icon: Icon, title, desc, tag, index }) {
 }
 
 export default function DarkFeature() {
+  const { t } = useLang();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  const features = t('darkFeature.items').map((item, i) => ({
+    ...item,
+    icon: FEATURE_ICONS[i],
+  }));
 
   return (
     <section className="dark-feature">
@@ -69,14 +51,12 @@ export default function DarkFeature() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.55 }}
         >
-          <span className="section-label dark-feature__section-label">Quy trình làm việc</span>
+          <span className="section-label dark-feature__section-label">{t('darkFeature.label')}</span>
           <h2 className="dark-feature__heading">
-            Hệ thống triển khai<br />được tối ưu cho kết quả
+            {t('darkFeature.headingLine1')}<br />
+            {t('darkFeature.headingLine2')}
           </h2>
-          <p className="dark-feature__sub">
-            Từ nghiên cứu đến scale — mọi bước trong quy trình MHC đều được đo lường
-            và tối ưu liên tục để tối đa hoá ROI cho khách hàng.
-          </p>
+          <p className="dark-feature__sub">{t('darkFeature.sub')}</p>
         </motion.div>
 
         <div className="dark-feature__grid">

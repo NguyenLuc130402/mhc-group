@@ -1,31 +1,29 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { CheckCircle, ArrowRight } from 'lucide-react';
+import { useLang } from '../../contexts/LangContext';
 import './About.css';
 
-const points = [
-  'Chuyên gia Google Ads, Affiliate & Performance Marketing với hơn 10 năm kinh nghiệm',
-  'Hệ thống tracking & báo cáo minh bạch theo thời gian thực',
-  'Tư vấn chiến lược cá nhân hóa, tối ưu ngân sách tối đa ROI',
-  'Cam kết KPI rõ ràng, đo lường hiệu quả bằng số liệu thực',
-];
-
-const chartData = [
-  { h: 55, month: 'T1', leads: 320 },
-  { h: 72, month: 'T2', leads: 415 },
-  { h: 48, month: 'T3', leads: 280 },
-  { h: 88, month: 'T4', leads: 510 },
-  { h: 65, month: 'T5', leads: 378 },
-  { h: 95, month: 'T6', leads: 551 },
-  { h: 78, month: 'T7', leads: 452 },
+const CHART_NUMS = [
+  { h: 55, leads: 320 },
+  { h: 72, leads: 415 },
+  { h: 48, leads: 280 },
+  { h: 88, leads: 510 },
+  { h: 65, leads: 378 },
+  { h: 95, leads: 551 },
+  { h: 78, leads: 452 },
 ];
 
 export default function About() {
+  const { t } = useLang();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
-
   const imgRef = useRef(null);
   const imgInView = useInView(imgRef, { once: true, margin: '-80px' });
+
+  const months = t('about.months');
+  const chartData = CHART_NUMS.map((d, i) => ({ ...d, month: months[i] }));
+  const points = t('about.points');
 
   return (
     <section className="about" id="about">
@@ -37,16 +35,9 @@ export default function About() {
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="section-label">Về MHC Group</span>
-          <h2 className="about__heading">
-            Xây dựng trên nền tảng tin cậy và chuyên môn
-          </h2>
-          <p className="about__desc">
-            MHC Group được thành lập với sứ mệnh mang lại các giải pháp Performance Marketing
-            hiệu quả cho doanh nghiệp tại Nghệ An và cả nước. Chúng tôi tự hào là đối tác
-            chiến lược giúp hàng nghìn khách hàng tăng trưởng doanh thu thực sự qua các
-            chiến dịch Google Ads, Affiliate và Performance Marketing.
-          </p>
+          <span className="section-label">{t('about.label')}</span>
+          <h2 className="about__heading">{t('about.heading')}</h2>
+          <p className="about__desc">{t('about.desc')}</p>
 
           <ul className="about__points">
             {points.map((p, i) => (
@@ -64,7 +55,7 @@ export default function About() {
           </ul>
 
           <a href="#contact" className="btn-primary about__cta">
-            Làm việc với chúng tôi <ArrowRight size={16} />
+            {t('about.cta')} <ArrowRight size={16} />
           </a>
         </motion.div>
 
@@ -78,8 +69,8 @@ export default function About() {
           <div className="about__visual-card about__visual-card--main">
             <div className="about__visual-header">
               <span className="about__visual-dot about__visual-dot--green" />
-              <span className="about__visual-title">Hiệu suất chiến dịch 2025</span>
-              <span className="about__visual-badge">Leads / tháng</span>
+              <span className="about__visual-title">{t('about.chartTitle')}</span>
+              <span className="about__visual-badge">{t('about.chartBadge')}</span>
             </div>
 
             <div className="about__chart-bars">
@@ -107,14 +98,14 @@ export default function About() {
 
             <div className="about__visual-stat">
               <span className="about__visual-stat-value">+72.2%</span>
-              <span className="about__visual-stat-label">Tăng trưởng leads T1 → T6</span>
+              <span className="about__visual-stat-label">{t('about.growth')}</span>
             </div>
           </div>
 
           <div className="about__visual-card about__visual-card--secondary">
-            <span className="about__mini-label">ROAS trung bình</span>
+            <span className="about__mini-label">{t('about.roasLabel')}</span>
             <span className="about__mini-value">4.2x</span>
-            <span className="about__mini-sub">trên toàn bộ chiến dịch</span>
+            <span className="about__mini-sub">{t('about.roasSub')}</span>
           </div>
         </motion.div>
       </div>

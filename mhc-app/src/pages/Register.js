@@ -3,9 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, UserPlus } from 'lucide-react';
 import { register } from '../api/toolsApi';
 import { saveAuth } from '../utils/auth';
+import { useLang } from '../contexts/LangContext';
 import './Auth.css';
 
 export default function Register() {
+  const { t } = useLang();
   const navigate = useNavigate();
   const [form,    setForm]    = useState({ username: '', email: '', password: '', confirm: '' });
   const [error,   setError]   = useState('');
@@ -16,16 +18,14 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (form.password !== form.confirm) return setError('Mật khẩu xác nhận không khớp');
+    if (form.password !== form.confirm) return setError(t('register.passwordMismatch'));
     setLoading(true);
     try {
       const data = await register(form.username, form.email, form.password);
       saveAuth(data.token, data.username);
-      //console.log(saveAuth)
       navigate('/admin');
     } catch (err) {
       setError(err.message);
-      //console.log(error)
     } finally {
       setLoading(false);
     }
@@ -38,8 +38,8 @@ export default function Register() {
           <span className="auth-logo__mark">MHC</span>
           <span className="auth-logo__sub">Admin</span>
         </div>
-        <h1 className="auth-title">Tạo tài khoản</h1>
-        <p className="auth-sub">Đăng ký để quản lý tool reviews của MHC Group.</p>
+        <h1 className="auth-title">{t('register.title')}</h1>
+        <p className="auth-sub">{t('register.sub')}</p>
 
         {error && <div className="auth-error">{error}</div>}
 
@@ -49,7 +49,7 @@ export default function Register() {
             <input
               className="auth-input"
               type="text"
-              placeholder="Username"
+              placeholder={t('register.username')}
               value={form.username}
               onChange={e => set('username', e.target.value)}
               required
@@ -60,7 +60,7 @@ export default function Register() {
             <input
               className="auth-input"
               type="email"
-              placeholder="Email"
+              placeholder={t('register.email')}
               value={form.email}
               onChange={e => set('email', e.target.value)}
               required
@@ -71,7 +71,7 @@ export default function Register() {
             <input
               className="auth-input"
               type="password"
-              placeholder="Mật khẩu (ít nhất 6 ký tự)"
+              placeholder={t('register.password')}
               value={form.password}
               onChange={e => set('password', e.target.value)}
               required
@@ -82,7 +82,7 @@ export default function Register() {
             <input
               className="auth-input"
               type="password"
-              placeholder="Xác nhận mật khẩu"
+              placeholder={t('register.confirm')}
               value={form.confirm}
               onChange={e => set('confirm', e.target.value)}
               required
@@ -90,12 +90,12 @@ export default function Register() {
           </div>
           <button className="auth-btn" type="submit" disabled={loading}>
             <UserPlus size={16} />
-            {loading ? 'Đang tạo tài khoản...' : 'Đăng ký'}
+            {loading ? t('register.loading') : t('register.btn')}
           </button>
         </form>
 
         <p className="auth-switch">
-          Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+          {t('register.hasAccount')} <Link to="/login">{t('register.loginLink')}</Link>
         </p>
       </div>
     </div>

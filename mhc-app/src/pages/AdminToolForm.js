@@ -5,6 +5,7 @@ import { CATEGORIES, generateId } from '../data/toolsData';
 import { getEmptyDetail } from '../data/toolsDetail';
 import { fetchTools, createTool, updateTool, fetchToolDetail, saveToolDetail, uploadLogo } from '../api/toolsApi';
 import { ToolLogo } from '../components/ToolReviews/ToolReviews';
+import { useLang } from '../contexts/LangContext';
 import './AdminToolForm.css';
 
 function Field({ label, required, hint, children }) {
@@ -40,7 +41,7 @@ function StarPicker({ value, onChange }) {
   );
 }
 
-function StringList({ items, onChange, placeholder }) {
+function StringList({ items, onChange, placeholder, addLabel }) {
   const set = (i, v) => { const n = [...items]; n[i] = v; onChange(n); };
   const add  = ()    => onChange([...items, '']);
   const del  = (i)   => onChange(items.filter((_, idx) => idx !== i));
@@ -55,12 +56,12 @@ function StringList({ items, onChange, placeholder }) {
           )}
         </div>
       ))}
-      <button type="button" className="af-list__add" onClick={add}><Plus size={13} /> Thêm</button>
+      <button type="button" className="af-list__add" onClick={add}><Plus size={13} /> {addLabel}</button>
     </div>
   );
 }
 
-function FeatureList({ items, onChange }) {
+function FeatureList({ items, onChange, namePlaceholder, descPlaceholder, addLabel }) {
   const set = (i, k, v) => { const n = [...items]; n[i] = { ...n[i], [k]: v }; onChange(n); };
   const add  = () => onChange([...items, { title: '', desc: '' }]);
   const del  = (i) => onChange(items.filter((_, idx) => idx !== i));
@@ -74,16 +75,16 @@ function FeatureList({ items, onChange }) {
               <button type="button" className="af-list__del" onClick={() => del(i)}><Trash2 size={14} /></button>
             )}
           </div>
-          <input className="af-input" value={item.title} onChange={e => set(i, 'title', e.target.value)} placeholder="Tên tính năng..." />
-          <textarea className="af-textarea" rows={2} value={item.desc} onChange={e => set(i, 'desc', e.target.value)} placeholder="Mô tả tính năng..." />
+          <input className="af-input" value={item.title} onChange={e => set(i, 'title', e.target.value)} placeholder={namePlaceholder} />
+          <textarea className="af-textarea" rows={2} value={item.desc} onChange={e => set(i, 'desc', e.target.value)} placeholder={descPlaceholder} />
         </div>
       ))}
-      <button type="button" className="af-list__add" onClick={add}><Plus size={13} /> Thêm tính năng</button>
+      <button type="button" className="af-list__add" onClick={add}><Plus size={13} /> {addLabel}</button>
     </div>
   );
 }
 
-function FAQList({ items, onChange }) {
+function FAQList({ items, onChange, qPlaceholder, aPlaceholder, addLabel }) {
   const set = (i, k, v) => { const n = [...items]; n[i] = { ...n[i], [k]: v }; onChange(n); };
   const add  = () => onChange([...items, { q: '', a: '' }]);
   const del  = (i) => onChange(items.filter((_, idx) => idx !== i));
@@ -97,16 +98,16 @@ function FAQList({ items, onChange }) {
               <button type="button" className="af-list__del" onClick={() => del(i)}><Trash2 size={14} /></button>
             )}
           </div>
-          <input className="af-input" value={item.q} onChange={e => set(i, 'q', e.target.value)} placeholder="Câu hỏi..." />
-          <textarea className="af-textarea" rows={2} value={item.a} onChange={e => set(i, 'a', e.target.value)} placeholder="Câu trả lời..." />
+          <input className="af-input" value={item.q} onChange={e => set(i, 'q', e.target.value)} placeholder={qPlaceholder} />
+          <textarea className="af-textarea" rows={2} value={item.a} onChange={e => set(i, 'a', e.target.value)} placeholder={aPlaceholder} />
         </div>
       ))}
-      <button type="button" className="af-list__add" onClick={add}><Plus size={13} /> Thêm FAQ</button>
+      <button type="button" className="af-list__add" onClick={add}><Plus size={13} /> {addLabel}</button>
     </div>
   );
 }
 
-function ReviewList({ items, onChange }) {
+function ReviewList({ items, onChange, userPlaceholder, rolePlaceholder, datePlaceholder, commentPlaceholder, addLabel }) {
   const set = (i, k, v) => { const n = [...items]; n[i] = { ...n[i], [k]: v }; onChange(n); };
   const add  = () => onChange([...items, { name: '', role: '', rating: 5, comment: '', date: '' }]);
   const del  = (i) => onChange(items.filter((_, idx) => idx !== i));
@@ -121,15 +122,15 @@ function ReviewList({ items, onChange }) {
             )}
           </div>
           <div className="af-review-grid">
-            <input className="af-input" value={item.name} onChange={e => set(i, 'name', e.target.value)} placeholder="Tên người dùng" />
-            <input className="af-input" value={item.role} onChange={e => set(i, 'role', e.target.value)} placeholder="Chức danh / Công ty" />
-            <input className="af-input" value={item.date} onChange={e => set(i, 'date', e.target.value)} placeholder="VD: Tháng 4, 2025" />
+            <input className="af-input" value={item.name} onChange={e => set(i, 'name', e.target.value)} placeholder={userPlaceholder} />
+            <input className="af-input" value={item.role} onChange={e => set(i, 'role', e.target.value)} placeholder={rolePlaceholder} />
+            <input className="af-input" value={item.date} onChange={e => set(i, 'date', e.target.value)} placeholder={datePlaceholder} />
             <StarPicker value={item.rating} onChange={v => set(i, 'rating', v)} />
           </div>
-          <textarea className="af-textarea" rows={2} value={item.comment} onChange={e => set(i, 'comment', e.target.value)} placeholder="Nhận xét của người dùng..." />
+          <textarea className="af-textarea" rows={2} value={item.comment} onChange={e => set(i, 'comment', e.target.value)} placeholder={commentPlaceholder} />
         </div>
       ))}
-      <button type="button" className="af-list__add" onClick={add}><Plus size={13} /> Thêm review</button>
+      <button type="button" className="af-list__add" onClick={add}><Plus size={13} /> {addLabel}</button>
     </div>
   );
 }
@@ -164,7 +165,7 @@ const AI_PROMPT = `Bạn là chuyên gia đánh giá phần mềm. Hãy tạo JS
 }
 
 Lưu ý:
-- category phải là một trong: "AI Tool", "CRM Tool", "SaaS Platforms", "Marketing Tool", "SEO Tool" hãy lựa chọn ngẫu nhiên 1 trong 4 tool này 
+- category phải là một trong: "AI Tool", "CRM Tool", "SaaS Platforms", "Marketing Tool", "SEO Tool" hãy lựa chọn ngẫu nhiên 1 trong 4 tool này
 - rating từ 1.0 đến 5.0
 - logoText tối đa 4 ký tự viết hoa
 - logoBg và logoFill là mã hex màu phù hợp với thương hiệu tool`;
@@ -175,6 +176,7 @@ const DEFAULT_BASIC = {
 };
 
 export default function AdminToolForm() {
+  const { t } = useLang();
   const navigate = useNavigate();
   const { id: toolId } = useParams();
   const isEdit = !!toolId;
@@ -195,7 +197,7 @@ export default function AdminToolForm() {
     if (!isEdit) return;
     Promise.all([fetchTools(), fetchToolDetail(toolId)])
       .then(([tools, det]) => {
-        const tool = tools.find(t => t.id === toolId);
+        const tool = tools.find(tl => tl.id === toolId);
         if (tool) setBasic(tool);
         setDetail({
           tagline:     det.tagline     || '',
@@ -228,7 +230,6 @@ export default function AdminToolForm() {
     setAiError('');
     try {
       const data = JSON.parse(aiJson);
-     // console.log(data)
       setBasic(p => ({
         ...p,
         name:       data.name       || p.name,
@@ -256,7 +257,7 @@ export default function AdminToolForm() {
       setAiJson('');
       setAiOpen(false);
     } catch {
-      setAiError('JSON không hợp lệ. Kiểm tra lại định dạng.');
+      setAiError(t('adminForm.aiError'));
     }
   };
 
@@ -268,8 +269,7 @@ export default function AdminToolForm() {
     try {
       const url = await uploadLogo(file);
       setB('logoUrl', url);
-    } catch (err) {
-     // console.log(err.message);
+    } catch {
       setPreviewUrl('');
     } finally {
       setUploading(false);
@@ -279,8 +279,8 @@ export default function AdminToolForm() {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!basic.name.trim()) return;
-    if (!basic.category) return alert('Vui lòng chọn danh mục');
-    if (!basic.logoUrl && !basic.logoText.trim()) return alert('Vui lòng upload ảnh logo hoặc nhập chữ logo');
+    if (!basic.category) return alert(t('adminForm.requireCategory'));
+    if (!basic.logoUrl && !basic.logoText.trim()) return alert(t('adminForm.requireLogo'));
     setSaving(true);
     try {
       const toolData = { ...basic, rating: parseFloat(basic.rating), reviews: parseInt(basic.reviews, 10) || 0 };
@@ -301,21 +301,23 @@ export default function AdminToolForm() {
     }
   };
 
-  if (loading) return <div style={{ padding: '120px 24px', textAlign: 'center', color: '#6b7280' }}>Đang tải...</div>;
+  if (loading) return <div style={{ padding: '120px 24px', textAlign: 'center', color: '#6b7280' }}>{t('adminForm.loading')}</div>;
+
+  const saveLabel = saving ? t('adminForm.saving') : isEdit ? t('adminForm.save') : t('adminForm.publish');
 
   return (
     <div className="af-page">
       <header className="af-topbar">
         <button className="af-back" onClick={() => navigate('/admin')}>
-          <ArrowLeft size={15} /> Quay lại
+          <ArrowLeft size={15} /> {t('adminForm.back')}
         </button>
         <div className="af-topbar__center">
           <span className="af-topbar__brand">MHC Admin</span>
           <span className="af-topbar__sep">/</span>
-          <span className="af-topbar__title">{isEdit ? `Sửa: ${basic.name}` : 'Thêm tool mới'}</span>
+          <span className="af-topbar__title">{isEdit ? `${t('adminForm.editPrefix')} ${basic.name}` : t('adminForm.addTitle')}</span>
         </div>
         <button type="submit" form="tool-form" className="af-btn af-btn--primary" disabled={saving}>
-          <Check size={14} /> {saving ? 'Đang lưu...' : isEdit ? 'Lưu thay đổi' : 'Đăng tool'}
+          <Check size={14} /> {saveLabel}
         </button>
       </header>
 
@@ -326,8 +328,8 @@ export default function AdminToolForm() {
             <button type="button" className="af-ai-box__toggle" onClick={() => setAiOpen(v => !v)}>
               <span className="af-ai-box__toggle-left">
                 <Sparkles size={15} />
-                Nhập nhanh bằng AI
-                <span className="af-ai-box__badge">AI ASSISTED</span>
+                {t('adminForm.aiTitle')}
+                <span className="af-ai-box__badge">{t('adminForm.aiBadge')}</span>
               </span>
               <ChevronDown size={15} className={`af-ai-box__chevron${aiOpen ? ' af-ai-box__chevron--open' : ''}`} />
             </button>
@@ -337,10 +339,10 @@ export default function AdminToolForm() {
                 <div className="af-ai-step">
                   <span className="af-ai-step__num">1</span>
                   <div>
-                    <p className="af-ai-step__title">Copy prompt → paste vào ChatGPT / Claude</p>
-                    <p className="af-ai-step__sub">Copy prompt bên dưới, paste vào AI cùng với thông tin tool để tạo JSON.</p>
+                    <p className="af-ai-step__title">{t('adminForm.aiStep1Title')}</p>
+                    <p className="af-ai-step__sub">{t('adminForm.aiStep1Sub')}</p>
                     <button type="button" className="af-ai-copy-btn" onClick={handleCopyPrompt}>
-                      <Copy size={13} /> {aiCopied ? 'Đã copy!' : 'Copy Prompt cho AI'}
+                      <Copy size={13} /> {aiCopied ? t('adminForm.aiCopied') : t('adminForm.aiCopyBtn')}
                     </button>
                   </div>
                 </div>
@@ -348,13 +350,13 @@ export default function AdminToolForm() {
                 <div className="af-ai-step">
                   <span className="af-ai-step__num">2</span>
                   <div style={{ width: '100%' }}>
-                    <p className="af-ai-step__title">Paste JSON từ AI vào đây</p>
+                    <p className="af-ai-step__title">{t('adminForm.aiStep2Title')}</p>
                     <textarea
                       className="af-ai-textarea"
                       rows={8}
                       value={aiJson}
                       onChange={e => { setAiJson(e.target.value); setAiError(''); }}
-                      placeholder={'Paste JSON mà AI đã tạo vào đây...\n\nVí dụ:\n{\n  "name": "ChatGPT",\n  "category": "AI Tool",\n  ...\n}'}
+                      placeholder={'Paste JSON...\n\n{\n  "name": "ChatGPT",\n  "category": "AI Tool",\n  ...\n}'}
                     />
                     {aiError && <p className="af-ai-error">{aiError}</p>}
                   </div>
@@ -363,10 +365,10 @@ export default function AdminToolForm() {
                 <div className="af-ai-step">
                   <span className="af-ai-step__num">3</span>
                   <div>
-                    <p className="af-ai-step__title">Kiểm tra & Import</p>
+                    <p className="af-ai-step__title">{t('adminForm.aiStep3Title')}</p>
                     <div className="af-ai-actions">
                       <button type="button" className="af-ai-import-btn" onClick={handleAiImport} disabled={!aiJson.trim()}>
-                        <Download size={13} /> Import vào Form
+                        <Download size={13} /> {t('adminForm.aiImportBtn')}
                       </button>
                     </div>
                   </div>
@@ -376,116 +378,135 @@ export default function AdminToolForm() {
           </div>
 
           <div className="af-card">
-            <h2 className="af-card__title">Thông tin cơ bản</h2>
-            <Field label="Tên tool" required>
-              <Input value={basic.name} onChange={v => setB('name', v)} placeholder="VD: ChatGPT" />
+            <h2 className="af-card__title">{t('adminForm.basicInfo')}</h2>
+            <Field label={t('adminForm.toolName')} required>
+              <Input value={basic.name} onChange={v => setB('name', v)} placeholder={t('adminForm.toolNamePlaceholder')} />
             </Field>
-            <Field label="Tagline ngắn">
-              <Input value={detail.tagline} onChange={v => setD('tagline', v)} placeholder="VD: Trợ lý AI mạnh mẽ nhất thế giới" />
+            <Field label={t('adminForm.tagline')}>
+              <Input value={detail.tagline} onChange={v => setD('tagline', v)} placeholder={t('adminForm.taglinePlaceholder')} />
             </Field>
-            <Field label="Mô tả chi tiết">
-              <Textarea rows={5} value={detail.description} onChange={v => setD('description', v)} placeholder="Mô tả tổng quan về tool này..." />
+            <Field label={t('adminForm.description')}>
+              <Textarea rows={5} value={detail.description} onChange={v => setD('description', v)} placeholder={t('adminForm.descPlaceholder')} />
             </Field>
           </div>
 
           <div className="af-card">
-            <h2 className="af-card__title">Ưu & Nhược điểm</h2>
+            <h2 className="af-card__title">{t('adminForm.proscons')}</h2>
             <div className="af-two-col">
-              <Field label="Ưu điểm">
-                <StringList items={detail.pros} onChange={v => setD('pros', v)} placeholder="Nhập ưu điểm..." />
+              <Field label={t('adminForm.pros')}>
+                <StringList items={detail.pros} onChange={v => setD('pros', v)} placeholder={t('adminForm.prosPlaceholder')} addLabel={t('adminForm.addItem')} />
               </Field>
-              <Field label="Nhược điểm">
-                <StringList items={detail.cons} onChange={v => setD('cons', v)} placeholder="Nhập nhược điểm..." />
+              <Field label={t('adminForm.cons')}>
+                <StringList items={detail.cons} onChange={v => setD('cons', v)} placeholder={t('adminForm.consPlaceholder')} addLabel={t('adminForm.addItem')} />
               </Field>
             </div>
           </div>
 
           <div className="af-card">
-            <h2 className="af-card__title">Tính năng nổi bật</h2>
-            <FeatureList items={detail.features} onChange={v => setD('features', v)} />
+            <h2 className="af-card__title">{t('adminForm.features')}</h2>
+            <FeatureList
+              items={detail.features}
+              onChange={v => setD('features', v)}
+              namePlaceholder={t('adminForm.featureName')}
+              descPlaceholder={t('adminForm.featureDesc')}
+              addLabel={t('adminForm.addFeature')}
+            />
           </div>
 
           <div className="af-card">
-            <h2 className="af-card__title">Câu hỏi thường gặp (FAQ)</h2>
-            <FAQList items={detail.faqs} onChange={v => setD('faqs', v)} />
+            <h2 className="af-card__title">{t('adminForm.faq')}</h2>
+            <FAQList
+              items={detail.faqs}
+              onChange={v => setD('faqs', v)}
+              qPlaceholder={t('adminForm.faqQ')}
+              aPlaceholder={t('adminForm.faqA')}
+              addLabel={t('adminForm.addFaq')}
+            />
           </div>
 
           <div className="af-card">
-            <h2 className="af-card__title">Đánh giá từ người dùng</h2>
-            <ReviewList items={detail.userReviews} onChange={v => setD('userReviews', v)} />
+            <h2 className="af-card__title">{t('adminForm.userReviews')}</h2>
+            <ReviewList
+              items={detail.userReviews}
+              onChange={v => setD('userReviews', v)}
+              userPlaceholder={t('adminForm.reviewUser')}
+              rolePlaceholder={t('adminForm.reviewRole')}
+              datePlaceholder={t('adminForm.reviewDate')}
+              commentPlaceholder={t('adminForm.reviewComment')}
+              addLabel={t('adminForm.addReview')}
+            />
           </div>
         </div>
 
         <aside className="af-sidebar">
           <div className="af-card af-card--sidebar">
-            <h3 className="af-card__title">Đăng bài</h3>
+            <h3 className="af-card__title">{t('adminForm.publishCard')}</h3>
             <button type="submit" className="af-btn af-btn--primary af-btn--full" disabled={saving}>
-              <Check size={14} /> {saving ? 'Đang lưu...' : isEdit ? 'Lưu thay đổi' : 'Đăng tool'}
+              <Check size={14} /> {saveLabel}
             </button>
             <button type="button" className="af-btn af-btn--ghost af-btn--full" onClick={() => navigate('/admin')}>
-              Hủy
+              {t('adminForm.cancel')}
             </button>
           </div>
 
           <div className="af-card af-card--sidebar">
-            <h3 className="af-card__title">Logo & Giao diện</h3>
+            <h3 className="af-card__title">{t('adminForm.logoSection')}</h3>
             <div className="af-logo-preview">
               <ToolLogo tool={basic} size={72} />
               <div className="af-logo-preview__info">
-                <p className="af-logo-preview__name">{basic.name || 'Tên tool'}</p>
+                <p className="af-logo-preview__name">{basic.name || t('adminForm.toolNamePreview')}</p>
                 <p className="af-logo-preview__cat">{basic.category}</p>
               </div>
             </div>
 
-            {/* Upload ảnh logo */}
-            <Field label="Ảnh logo (< 5MB)">
+            <Field label={t('adminForm.uploadLogo')}>
               <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
               {previewUrl || basic.logoUrl ? (
                 <div className="af-logo-upload__preview">
                   <img src={previewUrl || basic.logoUrl} alt="logo preview" className="af-logo-upload__img" />
                   <button type="button" className="af-logo-upload__remove" onClick={() => { setB('logoUrl', ''); setPreviewUrl(''); }}>
-                    <X size={14} /> Xóa ảnh
+                    <X size={14} /> {t('adminForm.removeImg')}
                   </button>
                 </div>
               ) : (
                 <button type="button" className="af-logo-upload__btn" onClick={() => fileInputRef.current.click()} disabled={uploading}>
-                  <Upload size={15} /> {uploading ? 'Đang upload...' : 'Chọn ảnh'}
+                  <Upload size={15} /> {uploading ? t('adminForm.uploading') : t('adminForm.chooseImg')}
                 </button>
               )}
             </Field>
 
-            <div className="af-divider"><span>hoặc dùng chữ</span></div>
+            <div className="af-divider"><span>{t('adminForm.orText')}</span></div>
 
-            <Field label="Chữ logo (2–4 ký tự)">
-              <Input value={basic.logoText} onChange={v => setB('logoText', v.toUpperCase().slice(0, 4))} placeholder="VD: GPT" maxLength={4} disabled={!!basic.logoUrl} />
+            <Field label={t('adminForm.logoText')}>
+              <Input value={basic.logoText} onChange={v => setB('logoText', v.toUpperCase().slice(0, 4))} placeholder={t('adminForm.logoTextPlaceholder')} maxLength={4} disabled={!!basic.logoUrl} />
             </Field>
             <div className="af-color-row">
-              <Field label="Màu nền">
+              <Field label={t('adminForm.bgColor')}>
                 <div className="af-color-pick">
                   <input type="color" value={basic.logoBg} onChange={e => setB('logoBg', e.target.value)} />
                   <span>{basic.logoBg}</span>
                 </div>
               </Field>
-              <Field label="Màu chữ">
+              <Field label={t('adminForm.textColor')}>
                 <div className="af-color-pick">
                   <input type="color" value={basic.logoFill} onChange={e => setB('logoFill', e.target.value)} />
                   <span>{basic.logoFill}</span>
                 </div>
               </Field>
             </div>
-            <Field label="Màu fill (tùy chọn)">
+            <Field label={t('adminForm.fillColor')}>
               <div className="af-color-pick">
                 <input type="color" value={basic.logoBgFill || '#ffffff'} onChange={e => setB('logoBgFill', e.target.value)} />
                 <span>{basic.logoBgFill || '–'}</span>
-                {basic.logoBgFill && <button type="button" className="af-clear-btn" onClick={() => setB('logoBgFill', '')}>Xóa</button>}
+                {basic.logoBgFill && <button type="button" className="af-clear-btn" onClick={() => setB('logoBgFill', '')}>{t('adminForm.clearFill')}</button>}
               </div>
             </Field>
-            <Field label="Hình dạng">
+            <Field label={t('adminForm.shape')}>
               <div className="af-radio-row">
                 {['rounded','circle'].map(s => (
                   <label key={s} className="af-radio">
                     <input type="radio" name="shape" value={s} checked={basic.logoShape === s} onChange={() => setB('logoShape', s)} />
-                    {s === 'rounded' ? 'Bo góc' : 'Tròn'}
+                    {s === 'rounded' ? t('adminForm.rounded') : t('adminForm.circle')}
                   </label>
                 ))}
               </div>
@@ -493,31 +514,31 @@ export default function AdminToolForm() {
           </div>
 
           <div className="af-card af-card--sidebar">
-            <h3 className="af-card__title">Phân loại</h3>
-            <Field label="Danh mục">
+            <h3 className="af-card__title">{t('adminForm.classifySection')}</h3>
+            <Field label={t('adminForm.category')}>
               <select className="af-input" value={basic.category} onChange={e => setB('category', e.target.value)} required>
-                <option value="" disabled>-- Chọn danh mục --</option>
+                <option value="" disabled>{t('adminForm.categoryPlaceholder')}</option>
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
             </Field>
-            <Field label="Đánh giá tổng">
+            <Field label={t('adminForm.rating')}>
               <StarPicker value={parseFloat(basic.rating)} onChange={v => setB('rating', v)} />
             </Field>
-            <Field label="Số lượt đánh giá">
-              <Input type="number" value={basic.reviews} onChange={v => setB('reviews', v)} placeholder="1000" />
+            <Field label={t('adminForm.reviewCount')}>
+              <Input type="number" value={basic.reviews} onChange={v => setB('reviews', v)} placeholder={t('adminForm.reviewCountPlaceholder')} />
             </Field>
           </div>
 
           <div className="af-card af-card--sidebar">
-            <h3 className="af-card__title">Thông tin nhanh</h3>
-            <Field label="Website">
-              <Input value={detail.website} onChange={v => setD('website', v)} placeholder="https://..." />
+            <h3 className="af-card__title">{t('adminForm.quickInfo')}</h3>
+            <Field label={t('adminForm.website')}>
+              <Input value={detail.website} onChange={v => setD('website', v)} placeholder={t('adminForm.websitePlaceholder')} />
             </Field>
-            <Field label="Giá">
-              <Input value={detail.pricing} onChange={v => setD('pricing', v)} placeholder="VD: Freemium / $20/tháng" />
+            <Field label={t('adminForm.price')}>
+              <Input value={detail.pricing} onChange={v => setD('pricing', v)} placeholder={t('adminForm.pricePlaceholder')} />
             </Field>
-            <Field label="Năm ra mắt">
-              <Input value={detail.founded} onChange={v => setD('founded', v)} placeholder="VD: 2022" />
+            <Field label={t('adminForm.founded')}>
+              <Input value={detail.founded} onChange={v => setD('founded', v)} placeholder={t('adminForm.foundedPlaceholder')} />
             </Field>
           </div>
         </aside>

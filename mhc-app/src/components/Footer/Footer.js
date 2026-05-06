@@ -1,22 +1,8 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import logo from '../../assets/images/LogoMHC.png';
+import { useLang } from '../../contexts/LangContext';
 import './Footer.css';
-
-const navCols = [
-  {
-    heading: 'Dịch vụ',
-    links: ['Google Ads', 'Affiliate Marketing', 'Performance Marketing', 'Lead Generation', 'Conversion Tracking'],
-  },
-  {
-    heading: 'Công ty',
-    links: ['Về chúng tôi', 'Đội ngũ', 'Đối tác', 'Tin tức', 'Tuyển dụng'],
-  },
-  {
-    heading: 'Hỗ trợ',
-    links: ['Liên hệ', 'FAQ', 'Chính sách bảo mật', 'Điều khoản sử dụng'],
-  },
-];
 
 const socials = [
   {
@@ -76,6 +62,9 @@ function FooterCol({ col }) {
 }
 
 export default function Footer() {
+  const { t } = useLang();
+  const cols = t('footer.cols');
+
   return (
     <footer className="footer">
       <div className="container footer__inner">
@@ -83,9 +72,7 @@ export default function Footer() {
           <a href="#top" className="footer__logo">
             <img src={logo} alt="MHC Group" className="footer__logo-img" />
           </a>
-          <p className="footer__tagline">
-            Chuyên triển khai Google Ads, Affiliate Marketing và Performance Marketing — tăng doanh thu thực sự cho doanh nghiệp.
-          </p>
+          <p className="footer__tagline">{t('footer.tagline')}</p>
           <address className="footer__address">
             No. 88 Vo Thi Sau Street,<br />
             Vinh City, Nghe An, Vietnam
@@ -106,7 +93,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {navCols.map(col => (
+        {cols.map(col => (
           <FooterCol key={col.heading} col={col} />
         ))}
       </div>
@@ -115,8 +102,8 @@ export default function Footer() {
         <div className="container footer__bottom-inner">
           <span className="footer__copy">© {new Date().getFullYear()} MHC Group. All rights reserved.</span>
           <div className="footer__bottom-links">
-            <a href="#top" className="footer__bottom-link">Chính sách bảo mật</a>
-            <a href="#top" className="footer__bottom-link">Điều khoản sử dụng</a>
+            <a href="#top" className="footer__bottom-link">{t('footer.privacy')}</a>
+            <a href="#top" className="footer__bottom-link">{t('footer.terms')}</a>
           </div>
         </div>
       </div>

@@ -4,36 +4,23 @@ import { Star, Target, Layers, DollarSign, ArrowRight, Mail, Search, X } from 'l
 import Navbar from '../components/Navbar/Navbar';
 import ToolReviews from '../components/ToolReviews/ToolReviews';
 import Footer from '../components/Footer/Footer';
+import ChatBubble from '../components/ChatBubble/ChatBubble';
 import { ToolLogo } from '../components/ToolReviews/ToolReviews';
 import { fetchTools } from '../api/toolsApi';
+import { useLang } from '../contexts/LangContext';
 import './Reviews.css';
 
-const TIPS = [
-  {
-    icon: <Target size={22} />,
-    title: 'Xác định nhu cầu trước',
-    desc: 'Liệt kê rõ bài toán bạn cần giải — tính năng, quy mô team, ngân sách — trước khi so sánh bất kỳ công cụ nào.',
-  },
-  {
-    icon: <Layers size={22} />,
-    title: 'So sánh tính năng cốt lõi',
-    desc: 'Đừng bị cuốn bởi tính năng phụ. Tập trung vào 3–5 tính năng quan trọng nhất với workflow của bạn.',
-  },
-  {
-    icon: <DollarSign size={22} />,
-    title: 'Tính tổng chi phí thực',
-    desc: 'Xem xét phí theo user, phí tích hợp, và chi phí đào tạo — không chỉ giá gói cơ bản trên trang pricing.',
-  },
-];
+const TIP_ICONS = [<Target size={22} />, <Layers size={22} />, <DollarSign size={22} />];
 
 function FeaturedTool({ tool }) {
+  const { t } = useLang();
   const navigate = useNavigate();
   return (
     <section className="rv-featured">
       <div className="container">
         <div className="rv-featured__inner">
           <div className="rv-featured__badge">
-            <Star size={13} fill="#f59e0b" color="#f59e0b" /> Công cụ nổi bật trong tuần
+            <Star size={13} fill="#f59e0b" color="#f59e0b" /> {t('reviews.featuredBadge')}
           </div>
           <div className="rv-featured__card">
             <div className="rv-featured__left">
@@ -46,16 +33,14 @@ function FeaturedTool({ tool }) {
                     <Star key={i} size={15} fill={i <= Math.round(tool.rating) ? '#f59e0b' : 'none'} color={i <= Math.round(tool.rating) ? '#f59e0b' : '#d1d5db'} />
                   ))}
                   <span className="rv-featured__score">{tool.rating}</span>
-                  <span className="rv-featured__count">({tool.reviews.toLocaleString()} đánh giá)</span>
+                  <span className="rv-featured__count">({tool.reviews.toLocaleString()} {t('reviews.ratingCount')})</span>
                 </div>
               </div>
             </div>
             <div className="rv-featured__right">
-              <p className="rv-featured__desc">
-                Được cộng đồng MHC bình chọn là công cụ đáng dùng nhất tuần này dựa trên rating, lượt đánh giá và mức độ phù hợp với thị trường Việt Nam.
-              </p>
+              <p className="rv-featured__desc">{t('reviews.featuredDesc')}</p>
               <button className="rv-featured__btn" onClick={() => navigate(`/tool/${tool.id}`)}>
-                Xem đánh giá chi tiết <ArrowRight size={15} />
+                {t('reviews.featuredBtn')} <ArrowRight size={15} />
               </button>
             </div>
           </div>
@@ -66,16 +51,18 @@ function FeaturedTool({ tool }) {
 }
 
 function GuideSection() {
+  const { t } = useLang();
+  const tips = t('reviews.tips').map((tip, i) => ({ ...tip, icon: TIP_ICONS[i] }));
   return (
     <section className="rv-guide">
       <div className="container">
         <div className="rv-guide__header">
-          <span className="section-label">Mẹo hữu ích</span>
-          <h2 className="rv-guide__title">Hướng dẫn chọn công cụ phù hợp</h2>
-          <p className="rv-guide__sub">Ba bước đơn giản giúp bạn không lãng phí tiền vào sai công cụ.</p>
+          <span className="section-label">{t('reviews.guideLabel')}</span>
+          <h2 className="rv-guide__title">{t('reviews.guideTitle')}</h2>
+          <p className="rv-guide__sub">{t('reviews.guideSub')}</p>
         </div>
         <div className="rv-guide__grid">
-          {TIPS.map((tip, i) => (
+          {tips.map((tip, i) => (
             <div key={i} className="rv-guide__card">
               <div className="rv-guide__icon">{tip.icon}</div>
               <h3 className="rv-guide__card-title">{tip.title}</h3>
@@ -89,6 +76,7 @@ function GuideSection() {
 }
 
 function NewsletterSection() {
+  const { t } = useLang();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
 
@@ -104,28 +92,28 @@ function NewsletterSection() {
         <div className="rv-newsletter__inner">
           <div className="rv-newsletter__left">
             <Mail size={32} className="rv-newsletter__icon" />
-            <h2 className="rv-newsletter__title">Nhận thông báo công cụ mới</h2>
-            <p className="rv-newsletter__sub">Mỗi tuần một email — tổng hợp công cụ mới, deal tốt và đánh giá từ cộng đồng MHC.</p>
+            <h2 className="rv-newsletter__title">{t('reviews.newsletterTitle')}</h2>
+            <p className="rv-newsletter__sub">{t('reviews.newsletterSub')}</p>
           </div>
           <div className="rv-newsletter__right">
             {sent ? (
-              <p className="rv-newsletter__thanks">Cảm ơn! Chúng tôi sẽ liên hệ sớm.</p>
+              <p className="rv-newsletter__thanks">{t('reviews.newsletterThanks')}</p>
             ) : (
               <form className="rv-newsletter__form" onSubmit={handleSubmit}>
                 <input
                   type="email"
                   className="rv-newsletter__input"
-                  placeholder="email@cua-ban.com"
+                  placeholder={t('reviews.newsletterPlaceholder')}
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   required
                 />
                 <button type="submit" className="rv-newsletter__btn">
-                  Đăng ký <ArrowRight size={15} />
+                  {t('reviews.newsletterBtn')} <ArrowRight size={15} />
                 </button>
               </form>
             )}
-            <p className="rv-newsletter__note">Không spam. Hủy đăng ký bất cứ lúc nào.</p>
+            <p className="rv-newsletter__note">{t('reviews.newsletterNote')}</p>
           </div>
         </div>
       </div>
@@ -134,6 +122,7 @@ function NewsletterSection() {
 }
 
 export default function Reviews() {
+  const { t } = useLang();
   const [featuredTool, setFeaturedTool] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -159,7 +148,7 @@ export default function Reviews() {
               <input
                 type="text"
                 className="rv-search-bar__input"
-                placeholder="Tìm công cụ theo tên hoặc danh mục..."
+                placeholder={t('reviews.searchPlaceholder')}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
@@ -177,6 +166,7 @@ export default function Reviews() {
         <NewsletterSection />
       </main>
       <Footer />
+      <ChatBubble />
     </>
   );
 }

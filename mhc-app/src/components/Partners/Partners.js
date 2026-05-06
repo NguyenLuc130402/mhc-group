@@ -1,24 +1,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { useLang } from '../../contexts/LangContext';
 import './Partners.css';
-
-const testimonials = [
-  {
-    quote: 'MHC Group đã giúp chúng tôi cơ cấu lại toàn bộ chiến lược marketing và tăng doanh thu 28% chỉ trong một năm. Đội ngũ rất chuyên nghiệp và tận tâm.',
-    name: 'Nguyễn Văn Thành',
-    role: 'Giám đốc điều hành, Công ty CP Xây dựng Nghệ An',
-  },
-  {
-    quote: 'Tư vấn minh bạch, rõ ràng và luôn đặt lợi ích của khách hàng lên hàng đầu. Tôi đã tin tưởng MHC trong 5 năm qua.',
-    name: 'Trần Thị Hương',
-    role: 'Doanh nhân cá nhân, Vinh City',
-  },
-  {
-    quote: 'Dịch vụ Performance Marketing của MHC giúp chúng tôi đạt ROI vượt kỳ vọng. Campaign Google Ads tối ưu rất hiệu quả!',
-    name: 'Lê Minh Quân',
-    role: 'CEO, Tập đoàn Minh Phát',
-  },
-];
 
 const logos = [
   { name: 'Google',   color: '#4285F4' },
@@ -135,8 +118,13 @@ function TestimonialCard({ quote, name, role, index }) {
 }
 
 export default function Partners() {
+  const { t } = useLang();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  const testimonials = t('partners.testimonials');
+  const headingLines = t('partners.heading').split('\n');
+
   return (
     <section className="partners" id="partners">
       <div className="container">
@@ -147,9 +135,9 @@ export default function Partners() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
         >
-          <span className="section-label">Đối tác & Khách hàng</span>
+          <span className="section-label">{t('partners.label')}</span>
           <h2 className="partners__heading">
-            Được tin tưởng bởi hàng nghìn<br />khách hàng trên cả nước
+            {headingLines[0]}<br />{headingLines[1]}
           </h2>
         </motion.div>
 
@@ -172,12 +160,11 @@ export default function Partners() {
 
       <div className="container">
         <div className="partners__testimonials">
-          {testimonials.map((t, i) => (
-            <TestimonialCard key={t.name} {...t} index={i} />
+          {testimonials.map((testimonial, i) => (
+            <TestimonialCard key={i} {...testimonial} index={i} />
           ))}
         </div>
       </div>
     </section>
   );
 }
-  

@@ -4,6 +4,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Star, Cpu, Users, Grid, Megaphone, Search } from 'lucide-react';
 import { CATEGORIES } from '../../data/toolsData';
 import { fetchTools } from '../../api/toolsApi';
+import { useLang } from '../../contexts/LangContext';
 import './ToolReviews.css';
 
 const categoryIcons = {
@@ -48,6 +49,7 @@ function StarRating({ rating }) {
 }
 
 function ToolCard({ tool, index }) {
+  const { t } = useLang();
   const navigate = useNavigate();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
@@ -67,12 +69,13 @@ function ToolCard({ tool, index }) {
       </div>
       <h4 className="tool-card__name">{tool.name}</h4>
       <StarRating rating={tool.rating} />
-      <span className="tool-card__reviews">{(tool.reviews / 1000).toFixed(0)}k đánh giá</span>
+      <span className="tool-card__reviews">{(tool.reviews / 1000).toFixed(0)}{t('toolReviews.reviewsSuffix')}</span>
     </motion.div>
   );
 }
 
 export default function ToolReviews({ searchQuery = '' }) {
+  const { t } = useLang();
   const [active, setActive] = useState(CATEGORIES[0]);
   const [allTools, setAllTools] = useState([]);
   const ref = useRef(null);
@@ -87,8 +90,8 @@ export default function ToolReviews({ searchQuery = '' }) {
 
   const q = searchQuery.trim().toLowerCase();
   const filtered = q
-    ? allTools.filter(t => t.name.toLowerCase().includes(q) || t.category.toLowerCase().includes(q))
-    : allTools.filter(t => t.category === active);
+    ? allTools.filter(tool => tool.name.toLowerCase().includes(q) || tool.category.toLowerCase().includes(q))
+    : allTools.filter(tool => tool.category === active);
 
   return (
     <section className="tool-reviews">
@@ -100,13 +103,12 @@ export default function ToolReviews({ searchQuery = '' }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
         >
-          <span className="section-label">Đánh giá công cụ</span>
+          <span className="section-label">{t('toolReviews.label')}</span>
           <h2 className="tool-reviews__heading">
-            Khám phá và so sánh<br />các công cụ hàng đầu
+            {t('toolReviews.headingLine1')}<br />
+            {t('toolReviews.headingLine2')}
           </h2>
-          <p className="tool-reviews__sub">
-            Đánh giá khách quan từ cộng đồng người dùng thực tế — giúp bạn chọn đúng công cụ cho công việc.
-          </p>
+          <p className="tool-reviews__sub">{t('toolReviews.sub')}</p>
         </motion.div>
 
         {!q && (
@@ -140,7 +142,7 @@ export default function ToolReviews({ searchQuery = '' }) {
           >
             {filtered.length > 0
               ? filtered.map((tool, i) => <ToolCard key={tool.id} tool={tool} index={i} />)
-              : <p style={{ color: '#94a3b8', fontSize: 14, gridColumn: '1/-1' }}>Không tìm thấy công cụ nào.</p>
+              : <p style={{ color: '#94a3b8', fontSize: 14, gridColumn: '1/-1' }}>{t('toolReviews.notFound')}</p>
             }
           </motion.div>
         </AnimatePresence>

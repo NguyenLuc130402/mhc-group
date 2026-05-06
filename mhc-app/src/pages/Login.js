@@ -3,9 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import { login } from '../api/toolsApi';
 import { saveAuth } from '../utils/auth';
+import { useLang } from '../contexts/LangContext';
 import './Auth.css';
 
 export default function Login() {
+  const { t } = useLang();
   const navigate = useNavigate();
   const [form,    setForm]    = useState({ email: '', password: '' });
   const [error,   setError]   = useState('');
@@ -35,8 +37,8 @@ export default function Login() {
           <span className="auth-logo__mark">MHC</span>
           <span className="auth-logo__sub">Admin</span>
         </div>
-        <h1 className="auth-title">Đăng nhập</h1>
-        <p className="auth-sub">Chào mừng trở lại! Vui lòng đăng nhập để tiếp tục.</p>
+        <h1 className="auth-title">{t('login.title')}</h1>
+        <p className="auth-sub">{t('login.sub')}</p>
 
         {error && <div className="auth-error">{error}</div>}
 
@@ -46,7 +48,7 @@ export default function Login() {
             <input
               className="auth-input"
               type="email"
-              placeholder="Email"
+              placeholder={t('login.email')}
               value={form.email}
               onChange={e => set('email', e.target.value)}
               required
@@ -57,7 +59,7 @@ export default function Login() {
             <input
               className="auth-input"
               type="password"
-              placeholder="Mật khẩu"
+              placeholder={t('login.password')}
               value={form.password}
               onChange={e => set('password', e.target.value)}
               required
@@ -65,12 +67,12 @@ export default function Login() {
           </div>
           <button className="auth-btn" type="submit" disabled={loading}>
             <LogIn size={16} />
-            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            {loading ? t('login.loading') : t('login.btn')}
           </button>
         </form>
 
         <p className="auth-switch">
-          Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+          {t('login.noAccount')} <Link to="/register">{t('login.registerLink')}</Link>
         </p>
       </div>
     </div>

@@ -8,6 +8,7 @@ import AdminToolForm from './pages/AdminToolForm';
 import ToolDetail from './pages/ToolDetail';
 import Reviews from './pages/Reviews';
 import { isLoggedIn } from './utils/auth';
+import { LangProvider } from './contexts/LangContext';
 
 function ProtectedRoute({ children }) {
   return isLoggedIn() ? children : <Navigate to="/login" replace />;
@@ -15,6 +16,7 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
+    <LangProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/"           element={<Home />} />
@@ -27,6 +29,7 @@ function App() {
         <Route path="/admin/edit/:id" element={<ProtectedRoute><AdminToolForm /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
+    </LangProvider>
   );
 }
 

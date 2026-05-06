@@ -1,15 +1,16 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
+import { useLang } from '../../contexts/LangContext';
 import './Stats.css';
 
-const stats = [
-  { to: 98, suffix: '%', label: 'Khách hàng tin tưởng' },
-  { to: 1200, suffix: '+', label: 'Khách hàng tin tưởng', format: true },
-  { to: 500, suffix: '+', label: 'Tỷ đồng doanh thu' },
-  { to: 200, suffix: '+', label: 'Dự án thành công' },
+const STATS_NUMS = [
+  { to: 98,   suffix: '%', format: false },
+  { to: 1200, suffix: '+', format: true  },
+  { to: 500,  suffix: '+', format: false },
+  { to: 200,  suffix: '+', format: false },
 ];
 
-const partners = ['Google', 'Meta', 'TikTok', 'Shopee', 'Lazada', 'Zalo'];
+const PARTNERS = ['Google', 'Meta', 'TikTok', 'Shopee', 'Lazada', 'Zalo'];
 
 function formatNum(n, format) {
   if (!format) return Math.round(n).toString();
@@ -62,14 +63,17 @@ function StatItem({ to, suffix, label, format, index }) {
 }
 
 export default function Stats() {
+  const { t } = useLang();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  const statsData = t('stats.items').map((item, i) => ({ ...STATS_NUMS[i], ...item }));
 
   return (
     <section className="stats" id="stats">
       <div className="container">
         <div className="stats__grid">
-          {stats.map((s, i) => <StatItem key={s.label} {...s} index={i} />)}
+          {statsData.map((s, i) => <StatItem key={i} {...s} index={i} />)}
         </div>
 
         <motion.div
@@ -79,9 +83,9 @@ export default function Stats() {
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <span className="stats__partners-label">Nền tảng đã triển khai</span>
+          <span className="stats__partners-label">{t('stats.partners')}</span>
           <div className="stats__partners-logos">
-            {partners.map(p => (
+            {PARTNERS.map(p => (
               <span key={p} className="stats__partner-name">{p}</span>
             ))}
           </div>

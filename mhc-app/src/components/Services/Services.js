@@ -1,51 +1,14 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Search, Link2, Rocket, Target, MousePointerClick, BarChart3 } from 'lucide-react';
+import { useLang } from '../../contexts/LangContext';
 import './Services.css';
 
-const services = [
-  {
-    icon: Search,
-    tag: 'Google Ads',
-    title: 'Search Ads',
-    desc: 'Tiếp cận đúng khách hàng tại thời điểm họ tìm kiếm. Tối ưu từ khóa theo đúng thế mạnh của bạn để tăng chuyển đổi và giảm chi phí mỗi click.',
-    points: ['Demand keywords', 'Lead generation', 'Tối ưu CPC & ROAS'],
-  },
-  {
-    icon: Link2,
-    tag: 'Google Ads',
-    title: 'Demand Gen & Display',
-    desc: 'Mở rộng tệp khách hàng tiềm năng với chiến dịch hiển thị thông minh, tiếp cận đúng đối tượng theo hành vi và sở thích.',
-    points: ['Remarketing', 'Lookalike audience', 'Brand awareness'],
-  },
-  {
-    icon: Target,
-    tag: 'Affiliate Marketing',
-    title: 'Setup hệ thống Affiliate',
-    desc: 'Xây dựng mạng lưới đối tác tiếp thị liên kết chuyên nghiệp — từ cấu hình hệ thống tracking đến tuyển dụng và quản lý publisher.',
-    points: ['Hệ thống tracking', 'Quản lý publisher', 'Tối ưu hoa hồng'],
-  },
-  {
-    icon: BarChart3,
-    tag: 'Affiliate Marketing',
-    title: 'Scale traffic & Conversion',
-    desc: 'Tăng trưởng lưu lượng truy cập chất lượng cao thông qua mạng affiliate và tối ưu tỷ lệ chuyển đổi ở từng bước phễu.',
-    points: ['Scale traffic', 'A/B testing', 'Tối ưu conversion'],
-  },
-  {
-    icon: Rocket,
-    tag: 'Performance Marketing',
-    title: 'Funnel & Landing Page',
-    desc: 'Thiết kế phễu marketing hiệu quả từ nhận thức đến hành động — kết hợp landing page chuyển đổi cao và luồng tự động hóa thông minh.',
-    points: ['Funnel strategy', 'Landing page CRO', 'Email automation'],
-  },
-  {
-    icon: MousePointerClick,
-    tag: 'Performance Marketing',
-    title: 'Conversion Tracking',
-    desc: 'Theo dõi và đo lường chính xác mọi điểm chuyển đổi — từ click đến đơn hàng, giúp tối ưu ngân sách và ra quyết định dựa trên dữ liệu thực.',
-    points: ['GA4 & GTM setup', 'Attribution model', 'Dashboard báo cáo'],
-  },
+const SERVICE_ICONS = [Search, Link2, Target, BarChart3, Rocket, MousePointerClick];
+const SERVICE_TAGS = [
+  'Google Ads', 'Google Ads',
+  'Affiliate Marketing', 'Affiliate Marketing',
+  'Performance Marketing', 'Performance Marketing',
 ];
 
 const tagColors = {
@@ -91,8 +54,15 @@ function ServiceCard({ icon: Icon, tag, title, desc, points, index }) {
 }
 
 export default function Services() {
+  const { t } = useLang();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
+
+  const services = t('services.items').map((item, i) => ({
+    ...item,
+    icon: SERVICE_ICONS[i],
+    tag: SERVICE_TAGS[i],
+  }));
 
   return (
     <section className="services" id="services">
@@ -104,14 +74,12 @@ export default function Services() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
         >
-          <span className="section-label">Dịch vụ Chuyên nghiệp</span>
+          <span className="section-label">{t('services.label')}</span>
           <h2 className="services__heading">
-            Tăng trưởng doanh thu<br />với Performance Marketing
+            {t('services.headingLine1')}<br />
+            {t('services.headingLine2')}
           </h2>
-          <p className="services__sub">
-            MHC Group chuyên triển khai các giải pháp quảng cáo hiệu suất cao — từ Google Ads,
-            Affiliate Marketing đến Performance Marketing toàn diện.
-          </p>
+          <p className="services__sub">{t('services.sub')}</p>
         </motion.div>
 
         <div className="services__grid">

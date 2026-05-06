@@ -8,6 +8,7 @@ import Partners from '../components/Partners/Partners';
 import Team from '../components/Team/Team';
 import CTABanner from '../components/CTABanner/CTABanner';
 import Footer from '../components/Footer/Footer';
+import ChatBubble from '../components/ChatBubble/ChatBubble';
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <CTABanner />
       </main>
       <Footer />
+      <ChatBubble />
     </>
   );
 }
