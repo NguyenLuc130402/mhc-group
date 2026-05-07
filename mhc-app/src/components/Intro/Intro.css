@@ -17,8 +17,8 @@
 }
 
 .intro__heading {
-  font-size: clamp(26px, 3.5vw, 40px);
-  font-weight: 800;
+  font-size: clamp(30px, 4vw, 52px);
+  font-weight: 900;
   color: var(--color-text);
   line-height: 1.25;
   letter-spacing: -0.5px;

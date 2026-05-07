@@ -98,8 +98,9 @@
   align-items: center;
   gap: 4px;
 }
-.af-field__req  { color: #ef4444; }
-.af-field__hint { font-weight: 400; color: #94a3b8; font-size: 11px; margin-left: 4px; }
+.af-field__req   { color: #ef4444; }
+.af-field__hint  { font-weight: 400; color: #94a3b8; font-size: 11px; margin-left: 4px; }
+.af-field__error { margin-top: 6px; font-size: 12px; color: #ef4444; }
 
 /* Inputs */
 .af-input {
@@ -510,6 +511,42 @@
   margin-top: 6px;
 }
 
+.af-ai-clear-json {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.12);
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.af-ai-clear-json:hover { background: #ef4444; color: #fff; }
+
+.af-ai-validate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.af-ai-validate-btn:hover:not(:disabled) { background: #2563eb; }
+.af-ai-validate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
 .af-ai-import-btn {
   display: inline-flex;
   align-items: center;
@@ -527,6 +564,12 @@
 }
 .af-ai-import-btn:hover:not(:disabled) { background: #16a34a; }
 .af-ai-import-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.af-ai-valid-ok {
+  font-size: 12px;
+  color: #16a34a;
+  margin-top: 6px;
+}
 
 @media (max-width: 900px) {
   .af-layout { grid-template-columns: 1fr; }

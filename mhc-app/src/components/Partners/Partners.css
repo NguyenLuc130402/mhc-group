@@ -4,13 +4,13 @@
 }
 
 .partners__header {
-  max-width: 600px;
+  max-width: 780px;
   margin-bottom: 56px;
 }
 
 .partners__heading {
-  font-size: clamp(26px, 3.5vw, var(--text-3xl));
-  font-weight: 800;
+  font-size: clamp(30px, 4vw, 52px);
+  font-weight: 900;
   letter-spacing: -1px;
   line-height: 1.15;
   color: var(--color-text);

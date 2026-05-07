@@ -139,12 +139,28 @@ export default function Reviews() {
     <>
       <Navbar />
       <main style={{ paddingTop: 'var(--nav-height)' }}>
+        <section className="rv-hero">
+          <div className="container rv-hero__inner">
+            <h1 className="rv-hero__heading">
+              {t('reviews.heroL1pre')}
+              <span className="rv-hero__accent">{t('reviews.heroL1accent')}</span>
+              {t('reviews.heroL1post')}
+              <br />
+              {t('reviews.heroL2pre')}
+              <span className="rv-hero__accent">{t('reviews.heroL2accent')}</span>
+              {t('reviews.heroL2post')}
+              {t('reviews.heroL3') && <><br />{t('reviews.heroL3')}</>}
+            </h1>
+            <p className="rv-hero__sub">{t('reviews.heroSub')}</p>
+          </div>
+        </section>
+
         {featuredTool && <FeaturedTool tool={featuredTool} />}
 
         <div className="rv-search-bar">
           <div className="container">
             <div className="rv-search-bar__wrap">
-              <Search size={18} className="rv-search-bar__icon" />
+              <Search size={20} className="rv-search-bar__icon" />
               <input
                 type="text"
                 className="rv-search-bar__input"

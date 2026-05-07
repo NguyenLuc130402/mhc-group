@@ -10,8 +10,8 @@
 }
 
 .team__heading {
-  font-size: clamp(28px, 4vw, 40px);
-  font-weight: 800;
+  font-size: clamp(32px, 4.5vw, 52px);
+  font-weight: 900;
   color: #0f172a;
   line-height: 1.2;
   margin: 12px 0 16px;

@@ -188,10 +188,13 @@ export default function AdminToolForm() {
   const [saving,    setSaving]    = useState(false);
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
-  const [aiOpen,    setAiOpen]    = useState(false);
-  const [aiJson,    setAiJson]    = useState('');
-  const [aiError,   setAiError]   = useState('');
-  const [aiCopied,  setAiCopied]  = useState(false);
+  const [aiOpen,       setAiOpen]       = useState(false);
+  const [aiJson,       setAiJson]       = useState('');
+  const [aiError,      setAiError]      = useState('');
+  const [aiCopied,     setAiCopied]     = useState(false);
+  const [aiValidState, setAiValidState] = useState(null); // null | 'ok' | 'error'
+  const [aiValidMsg,   setAiValidMsg]   = useState('');
+  const [nameError,    setNameError]    = useState('');
 
   useEffect(() => {
     if (!isEdit) return;
@@ -224,6 +227,36 @@ export default function AdminToolForm() {
       setAiCopied(true);
       setTimeout(() => setAiCopied(false), 2000);
     });
+  };
+
+  const handleValidateJson = () => {
+    setAiError('');
+    let data;
+    try {
+      data = JSON.parse(aiJson);
+    } catch {
+      setAiValidState('error');
+      setAiValidMsg(t('adminForm.aiValidErrParse'));
+      return;
+    }
+    if (!data.name || !String(data.name).trim()) {
+      setAiValidState('error');
+      setAiValidMsg(t('adminForm.aiValidErrName'));
+      return;
+    }
+    if (!CATEGORIES.includes(data.category)) {
+      setAiValidState('error');
+      setAiValidMsg(t('adminForm.aiValidErrCategory'));
+      return;
+    }
+    const rating = parseFloat(data.rating);
+    if (isNaN(rating) || rating < 1 || rating > 5) {
+      setAiValidState('error');
+      setAiValidMsg(t('adminForm.aiValidErrRating'));
+      return;
+    }
+    setAiValidState('ok');
+    setAiValidMsg(t('adminForm.aiValidOk'));
   };
 
   const handleAiImport = () => {
@@ -281,6 +314,23 @@ export default function AdminToolForm() {
     if (!basic.name.trim()) return;
     if (!basic.category) return alert(t('adminForm.requireCategory'));
     if (!basic.logoUrl && !basic.logoText.trim()) return alert(t('adminForm.requireLogo'));
+
+    if (!isEdit) {
+      try {
+        const existing = await fetchTools();
+        const isDuplicate = existing.some(
+          tl => tl.name.trim().toLowerCase() === basic.name.trim().toLowerCase()
+        );
+        if (isDuplicate) {
+          setNameError(t('adminForm.duplicateName'));
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    setNameError('');
     setSaving(true);
     try {
       const toolData = { ...basic, rating: parseFloat(basic.rating), reviews: parseInt(basic.reviews, 10) || 0 };
@@ -351,14 +401,29 @@ export default function AdminToolForm() {
                   <span className="af-ai-step__num">2</span>
                   <div style={{ width: '100%' }}>
                     <p className="af-ai-step__title">{t('adminForm.aiStep2Title')}</p>
-                    <textarea
-                      className="af-ai-textarea"
-                      rows={8}
-                      value={aiJson}
-                      onChange={e => { setAiJson(e.target.value); setAiError(''); }}
-                      placeholder={'Paste JSON...\n\n{\n  "name": "ChatGPT",\n  "category": "AI Tool",\n  ...\n}'}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <textarea
+                        className="af-ai-textarea"
+                        rows={8}
+                        value={aiJson}
+                        onChange={e => { setAiJson(e.target.value); setAiError(''); setAiValidState(null); setAiValidMsg(''); }}
+                        placeholder={'Paste JSON...\n\n{\n  "name": "ChatGPT",\n  "category": "AI Tool",\n  ...\n}'}
+                      />
+                      {aiJson && (
+                        <button
+                          type="button"
+                          className="af-ai-clear-json"
+                          onClick={() => { setAiJson(''); setAiError(''); setAiValidState(null); setAiValidMsg(''); }}
+                          title="Xóa JSON"
+                        >
+                          <X size={13} />
+                        </button>
+                      )}
+                    </div>
                     {aiError && <p className="af-ai-error">{aiError}</p>}
+                    {aiValidMsg && (
+                      <p className={aiValidState === 'ok' ? 'af-ai-valid-ok' : 'af-ai-error'}>{aiValidMsg}</p>
+                    )}
                   </div>
                 </div>
 
@@ -367,7 +432,10 @@ export default function AdminToolForm() {
                   <div>
                     <p className="af-ai-step__title">{t('adminForm.aiStep3Title')}</p>
                     <div className="af-ai-actions">
-                      <button type="button" className="af-ai-import-btn" onClick={handleAiImport} disabled={!aiJson.trim()}>
+                      <button type="button" className="af-ai-validate-btn" onClick={handleValidateJson} disabled={!aiJson.trim()}>
+                        <Check size={13} /> {t('adminForm.aiValidateBtn')}
+                      </button>
+                      <button type="button" className="af-ai-import-btn" onClick={handleAiImport} disabled={aiValidState !== 'ok'}>
                         <Download size={13} /> {t('adminForm.aiImportBtn')}
                       </button>
                     </div>
@@ -380,7 +448,8 @@ export default function AdminToolForm() {
           <div className="af-card">
             <h2 className="af-card__title">{t('adminForm.basicInfo')}</h2>
             <Field label={t('adminForm.toolName')} required>
-              <Input value={basic.name} onChange={v => setB('name', v)} placeholder={t('adminForm.toolNamePlaceholder')} />
+              <Input value={basic.name} onChange={v => { setB('name', v); setNameError(''); }} placeholder={t('adminForm.toolNamePlaceholder')} />
+              {nameError && <p className="af-field__error">{nameError}</p>}
             </Field>
             <Field label={t('adminForm.tagline')}>
               <Input value={detail.tagline} onChange={v => setD('tagline', v)} placeholder={t('adminForm.taglinePlaceholder')} />

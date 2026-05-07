@@ -36,7 +36,11 @@ export default function About() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <span className="section-label">{t('about.label')}</span>
-          <h2 className="about__heading">{t('about.heading')}</h2>
+          <h2 className="about__heading">
+            {t('about.headingL1')}<br />
+            {t('about.headingL2')}<br />
+            {t('about.headingL3')}
+          </h2>
           <p className="about__desc">{t('about.desc')}</p>
 
           <ul className="about__points">
