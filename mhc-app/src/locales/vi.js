@@ -42,6 +42,13 @@ const vi = {
     cta1: 'Khám phá dịch vụ',
     cta2: 'Về chúng tôi',
   },
+  intro: {
+    heading1: 'Hành trình phát triển cùng',
+    heading2: 'MHC GROUP',
+    desc: 'Với đội ngũ chuyên gia giàu kinh nghiệm trong lĩnh vực Digital Marketing, chúng tôi cam kết mang đến những giải pháp quảng cáo hiệu quả nhất — giúp doanh nghiệp bạn tăng trưởng doanh thu bền vững.',
+    address: 'Nghệ An, Việt Nam',
+    cta: 'Liên hệ tư vấn ngay',
+  },
   stats: {
     partners: 'Nền tảng đã triển khai',
     items: [

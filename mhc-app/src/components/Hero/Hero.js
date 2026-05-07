@@ -60,8 +60,8 @@ function Particles() {
         ctx.fill();
         p.x += p.vx;
         p.y += p.vy;
-        if (p.x < 0)            p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
+        if (p.x < 0)             p.x = canvas.width;
+        if (p.x > canvas.width)  p.x = 0;
         if (p.y < 0)             p.y = canvas.height;
         if (p.y > canvas.height) p.y = 0;
       });
@@ -84,7 +84,6 @@ export default function Hero() {
   return (
     <section className="hero" id="top">
       <Particles />
-      {/* Orbs */}
       <div className="hero__orb hero__orb--1" />
       <div className="hero__orb hero__orb--2" />
       <div className="hero__orb hero__orb--3" />
@@ -92,16 +91,31 @@ export default function Hero() {
 
       <div className="container hero__inner">
         <motion.h1
-          className="hero__headline"
+          className="hero__name"
           variants={fadeUp}
           initial="hidden"
           animate="visible"
           custom={0}
         >
-          We Don't Just Drive Traffic
-          <br />
-          <span className="hero__headline--accent">We Drive Profit</span>
+          <motion.span
+            className="hero__name--accent"
+            initial={{ clipPath: 'inset(0 100% 0 0)' }}
+            animate={{ clipPath: 'inset(0 0% 0 0)' }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >MHC</motion.span>
+          {' GROUP'}
+          <span className="hero__cursor" />
         </motion.h1>
+
+        <motion.div
+          className="hero__tagline"
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={1}
+        >
+          We Don't Just Drive Traffic — We Drive Profit
+        </motion.div>
 
         <motion.p
           className="hero__sub"
@@ -129,9 +143,15 @@ export default function Hero() {
         </motion.div>
       </div>
 
+      <div className="hero__wave">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,50 C320,10 1120,80 1440,30 L1440,80 L0,80 Z" fill="#fff" />
+        </svg>
+      </div>
+
       <motion.button
         className="hero__scroll-hint"
-        onClick={() => { const el = document.getElementById('stats'); if (el) smoothScrollTo(el.getBoundingClientRect().top + window.scrollY - 80); }}
+        onClick={() => { const el = document.getElementById('intro'); if (el) smoothScrollTo(el.getBoundingClientRect().top + window.scrollY - 80); }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: [0, 8, 0] }}
         transition={{ opacity: { delay: 1.4, duration: 0.5 }, y: { delay: 1.8, duration: 1.4, repeat: Infinity, ease: 'easeInOut' } }}

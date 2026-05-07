@@ -42,6 +42,13 @@ const en = {
     cta1: 'Explore Services',
     cta2: 'About Us',
   },
+  intro: {
+    heading1: 'Growing together with',
+    heading2: 'MHC GROUP',
+    desc: 'With a team of experienced Digital Marketing experts, we are committed to delivering the most effective advertising solutions — helping your business achieve sustainable revenue growth.',
+    address: 'Nghe An, Vietnam',
+    cta: 'Contact us now',
+  },
   stats: {
     partners: 'Deployed Platforms',
     items: [
