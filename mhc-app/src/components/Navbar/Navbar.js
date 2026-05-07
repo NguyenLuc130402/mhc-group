@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, TrendingUp, Users, BarChart2, Zap, Target, LineChart } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Menu, X, ChevronDown, TrendingUp, Users, BarChart2, Zap, Target, LineChart, Globe } from 'lucide-react';
 import logo from '../../assets/images/LogoMHC.png';
 import { useLang } from '../../contexts/LangContext';
 import './Navbar.css';
@@ -10,17 +10,34 @@ const ITEM_ICONS = [
   [<Target size={18} />, <LineChart size={18} />],
 ];
 
+const LANGS = [
+  { code: 'vi', short: 'VN', label: 'Tiếng Việt' },
+  { code: 'en', short: 'US', label: 'English' },
+];
+
 export default function Navbar() {
   const { lang, toggle, t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    const onClickOutside = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) setLangOpen(false);
+    };
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
+
+  const currentLang = LANGS.find(l => l.code === lang);
 
   const serviceGroups = t('navbar.serviceGroups').map((group, gi) => ({
     heading: group.heading,
@@ -94,9 +111,28 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <button className="navbar__lang-toggle" onClick={toggle} aria-label="Toggle language">
-          {lang === 'vi' ? 'EN' : 'VI'}
-        </button>
+        <div className="navbar__lang-wrap" ref={langRef}>
+          <button className="navbar__lang-toggle" onClick={() => setLangOpen(v => !v)}>
+            <Globe size={13} />
+            <span>{currentLang.short}</span>
+            <ChevronDown size={12} className={`navbar__lang-chevron${langOpen ? ' navbar__lang-chevron--open' : ''}`} />
+          </button>
+          {langOpen && (
+            <div className="navbar__lang-dropdown">
+              {LANGS.map(l => (
+                <button
+                  key={l.code}
+                  className={`navbar__lang-option${l.code === lang ? ' navbar__lang-option--active' : ''}`}
+                  onClick={() => { if (l.code !== lang) toggle(); setLangOpen(false); }}
+                >
+                  <span className="navbar__lang-short">{l.short}</span>
+                  <span className="navbar__lang-label">{l.label}</span>
+                  {l.code === lang && <span className="navbar__lang-check">✓</span>}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         <a href="#contact" className="btn-primary navbar__cta">{t('navbar.contact')}</a>
 

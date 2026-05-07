@@ -18,6 +18,16 @@
   100% { background-image: radial-gradient(ellipse at 50% -10%, #1a0a05 0%, var(--color-bg-dark) 60%); }
 }
 
+/* Particles */
+.hero__particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* Orbs */
 .hero__orb {
   position: absolute;

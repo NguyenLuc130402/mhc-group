@@ -59,14 +59,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-accent);
-  transition: background 0.2s, border-color 0.2s;
+  color: #9ca3af;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
   flex-shrink: 0;
 }
 
 .service-card:hover .service-card__icon {
   background: #fff3ef;
   border-color: #fbd0c0;
+  color: var(--color-accent);
 }
 
 .service-card__tag {
