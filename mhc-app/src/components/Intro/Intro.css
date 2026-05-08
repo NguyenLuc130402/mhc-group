@@ -60,14 +60,14 @@
 .intro__image-wrap {
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(232, 93, 47, 0.25), 0 8px 32px rgba(232, 93, 47, 0.2);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   aspect-ratio: 16 / 10;
 }
 
 .intro__image-wrap:hover {
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(232, 93, 47, 0.4), 0 12px 40px rgba(232, 93, 47, 0.3);
 }
 
 .intro__image {

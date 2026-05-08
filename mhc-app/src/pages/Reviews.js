@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, Target, Layers, DollarSign, ArrowRight, Mail, Search, X } from 'lucide-react';
+import { Star, Target, Layers, DollarSign, ArrowRight, Mail, Search, X, ArrowDown } from 'lucide-react';
+import benefitsImg from '../assets/images/webinar-2.webp';
 import Navbar from '../components/Navbar/Navbar';
 import ToolReviews from '../components/ToolReviews/ToolReviews';
 import Footer from '../components/Footer/Footer';
@@ -75,6 +76,85 @@ function GuideSection() {
   );
 }
 
+const STEP_COLORS = ['#86efac', '#fed7aa', '#ddd6fe'];
+const BAR_HEIGHTS = [40, 65, 50, 80, 60, 90, 70];
+
+function RecommendSection() {
+  const { t } = useLang();
+  const steps = t('reviews.recommendSteps');
+  return (
+    <section className="rv-recommend">
+      <div className="container">
+        <div className="rv-recommend__header">
+          <h2 className="rv-recommend__title">{t('reviews.recommendTitle')}</h2>
+          <p className="rv-recommend__sub">{t('reviews.recommendSub')}</p>
+        </div>
+
+        <div className="rv-recommend__body">
+          {/* Cột trái — ảnh + widgets */}
+          <div className="rv-recommend__left">
+            <img src={benefitsImg} alt="consultant" className="rv-recommend__img" />
+
+            <div className="rv-recommend__widget rv-recommend__widget--top">
+              <div className="rv-recommend__widget-label">Doanh nghiệp tư vấn</div>
+              <div className="rv-recommend__widget-value">1,000+ <span className="rv-recommend__badge-up">+18%</span></div>
+              <div className="rv-recommend__bars">
+                {BAR_HEIGHTS.map((h, i) => (
+                  <div key={i} className="rv-recommend__bar" style={{ height: `${h}%` }} />
+                ))}
+              </div>
+            </div>
+
+            <div className="rv-recommend__widget rv-recommend__widget--mid">
+              <div className="rv-recommend__widget-label">Công cụ được đánh giá</div>
+              <div className="rv-recommend__widget-value">50+</div>
+              <div className="rv-recommend__sparkline">
+                {[30,50,40,70,55,80].map((h, i) => (
+                  <div key={i} className="rv-recommend__spark-dot" style={{ bottom: `${h}%` }} />
+                ))}
+              </div>
+            </div>
+
+            <div className="rv-recommend__widget rv-recommend__widget--bot">
+              <div className="rv-recommend__ring">
+                <svg viewBox="0 0 36 36" className="rv-recommend__ring-svg">
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#e5e7eb" strokeWidth="3" />
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="#8b5cf6" strokeWidth="3"
+                    strokeDasharray="61 100" strokeLinecap="round" strokeDashoffset="25" />
+                </svg>
+                <span className="rv-recommend__ring-label">98%</span>
+              </div>
+              <div>
+                <div className="rv-recommend__widget-label">Khách hàng hài lòng</div>
+                <div className="rv-recommend__widget-value rv-recommend__widget-value--sm">+2.4%</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Cột phải — 3 bước */}
+          <div className="rv-recommend__right">
+            {steps.map((step, i) => (
+              <div key={i} className="rv-recommend__step-wrap">
+                <div className="rv-recommend__step">
+                  <p className="rv-recommend__step-text">{step}</p>
+                  <span className="rv-recommend__step-num" style={{ color: STEP_COLORS[i] }}>{i + 1}</span>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className="rv-recommend__arrow"><ArrowDown size={16} /></div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rv-recommend__cta">
+          <button className="rv-recommend__btn">{t('reviews.recommendBtn')}</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function NewsletterSection() {
   const { t } = useLang();
   const [email, setEmail] = useState('');
@@ -92,7 +172,7 @@ function NewsletterSection() {
         <div className="rv-newsletter__inner">
           <div className="rv-newsletter__left">
             <Mail size={32} className="rv-newsletter__icon" />
-            <h2 className="rv-newsletter__title">{t('reviews.newsletterTitle')}</h2>
+            <h2 className="rv-newsletter__title">{t('reviews.newsletterTitleL1')}<br />{t('reviews.newsletterTitleL2')}</h2>
             <p className="rv-newsletter__sub">{t('reviews.newsletterSub')}</p>
           </div>
           <div className="rv-newsletter__right">
@@ -142,14 +222,17 @@ export default function Reviews() {
         <section className="rv-hero">
           <div className="container rv-hero__inner">
             <h1 className="rv-hero__heading">
-              {t('reviews.heroL1pre')}
-              <span className="rv-hero__accent">{t('reviews.heroL1accent')}</span>
-              {t('reviews.heroL1post')}
-              <br />
-              {t('reviews.heroL2pre')}
-              <span className="rv-hero__accent">{t('reviews.heroL2accent')}</span>
-              {t('reviews.heroL2post')}
-              {t('reviews.heroL3') && <><br />{t('reviews.heroL3')}</>}
+              <span className="rv-hero__line">
+                {t('reviews.heroL1pre')}
+                <span className="rv-hero__accent">{t('reviews.heroL1accent')}</span>
+                {t('reviews.heroL1post')}
+              </span>
+              <span className="rv-hero__line">
+                {t('reviews.heroL2pre')}
+                <span className="rv-hero__accent">{t('reviews.heroL2accent')}</span>
+                {t('reviews.heroL2post')}
+              </span>
+              {t('reviews.heroL3') && <span className="rv-hero__line">{t('reviews.heroL3')}</span>}
             </h1>
             <p className="rv-hero__sub">{t('reviews.heroSub')}</p>
           </div>
@@ -179,6 +262,7 @@ export default function Reviews() {
 
         <ToolReviews searchQuery={searchQuery} />
         <GuideSection />
+        <RecommendSection />
         <NewsletterSection />
       </main>
       <Footer />

@@ -6,6 +6,8 @@ import { getEmptyDetail } from '../data/toolsDetail';
 import { fetchTools, createTool, updateTool, fetchToolDetail, saveToolDetail, uploadLogo } from '../api/toolsApi';
 import { ToolLogo } from '../components/ToolReviews/ToolReviews';
 import { useLang } from '../contexts/LangContext';
+import AdminSidebar from './AdminSidebar';
+import './Admin.css';
 import './AdminToolForm.css';
 
 function Field({ label, required, hint, children }) {
@@ -356,7 +358,9 @@ export default function AdminToolForm() {
   const saveLabel = saving ? t('adminForm.saving') : isEdit ? t('adminForm.save') : t('adminForm.publish');
 
   return (
-    <div className="af-page">
+    <div className="adm">
+      <AdminSidebar />
+      <div className="adm__main af-page">
       <header className="af-topbar">
         <button className="af-back" onClick={() => navigate('/admin')}>
           <ArrowLeft size={15} /> {t('adminForm.back')}
@@ -612,6 +616,7 @@ export default function AdminToolForm() {
           </div>
         </aside>
       </form>
+      </div>
     </div>
   );
 }

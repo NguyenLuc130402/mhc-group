@@ -93,6 +93,27 @@ Export từ `mhc-app/src/components/ToolReviews/ToolReviews.js` (không phải f
 
 Các trường cấu hình logo: `logoBg`, `logoFill`, `logoText`, `logoShape` (`'rounded'|'circle'`), tùy chọn `logoBgFill`, tùy chọn `logoUrl` (ảnh upload — ưu tiên hơn text logo).
 
+### Stats — Partner logos
+
+Partner logos trong `Stats.js` dùng **Simple Icons CDN**: `https://cdn.simpleicons.org/{slug}/{hex_color}`. Mảng `PARTNERS` là array object `{ name, slug, color }`. CSS `filter: grayscale(1) opacity(0.45)` mặc định, hover `filter: none` để hiện màu brand. Kích thước cố định `28×28px` với `object-fit: contain`.
+
+Stat "Lượt tiếp cận khách hàng" dùng `suffix: 'M+'` (không phải `'+'`).
+
+### Button màu cam — quy tắc hiệu ứng
+
+**Mọi** button có `background: #E85D2F` / `var(--color-accent)` phải có đầy đủ:
+- `position: relative; overflow: hidden`
+- `transition: background 0.2s, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s`
+- `::after` shimmer: `linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%)` slide từ trái sang phải khi hover
+- Hover: `transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,93,47,0.35)`
+- Active: `transform: translateY(0); box-shadow: 0 4px 12px rgba(232,93,47,0.25)`
+
+Button dùng class `.btn-primary` (global.css) đã có sẵn. Button có class riêng cần thêm thủ công.
+
+### ⚠️ Known issue — Upload ảnh không persistent trên production
+
+`POST /api/upload` dùng `multer.diskStorage` lưu file vào `mhc-api/uploads/` (local filesystem). Render.com free tier **không có persistent filesystem** — file bị xóa khi server restart. URL trả về cũng hardcode `http://localhost:PORT/...` (sai trên production). Cần migrate sang Cloudinary hoặc S3 trước khi dùng tính năng upload ảnh trên production.
+
 ### Design system
 
 CSS custom properties định nghĩa trong `mhc-app/src/styles/variables.css`:
@@ -137,7 +158,8 @@ Thứ tự section:
 3. **SearchBar** — tìm kiếm realtime, truyền `searchQuery` prop xuống ToolReviews
 4. **ToolReviews** — nhận prop `searchQuery`; khi có query thì filter toàn bộ danh mục, ẩn tabs; khi rỗng thì hiện tabs theo danh mục
 5. **GuideSection** — 3 block tips tĩnh
-6. **NewsletterSection** — form email (UI only)
+6. **RecommendSection** — 2 cột: ảnh (`src/assets/images/webinar-2.webp`) + 3 floating widget stats bên trái, 3 bước có số lớn màu nền mờ bên phải. Locale keys dưới namespace `reviews.recommend*`
+7. **NewsletterSection** — form email (UI only)
 
 CSS riêng: `mhc-app/src/pages/Reviews.css`
 

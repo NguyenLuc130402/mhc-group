@@ -5,12 +5,19 @@ import './Stats.css';
 
 const STATS_NUMS = [
   { to: 98,   suffix: '%', format: false },
-  { to: 1200, suffix: '+', format: true  },
-  { to: 500,  suffix: '+', format: false },
-  { to: 200,  suffix: '+', format: false },
+  { to: 200, suffix: 'M+', format: true  },
+  { to: 1000,  suffix: '+', format: false },
+  { to: 2000,  suffix: '+', format: false },
 ];
 
-const PARTNERS = ['Google', 'Meta', 'TikTok', 'Shopee', 'Lazada', 'Zalo'];
+const PARTNERS = [
+  { name: 'Google',  slug: 'google',  color: '4285F4' },
+  { name: 'Meta',    slug: 'meta',    color: '0866FF' },
+  { name: 'TikTok',  slug: 'tiktok',  color: '010101' },
+  { name: 'Shopee',  slug: 'shopee',  color: 'EE4D2D' },
+  { name: 'YouTube',   slug: 'youtube',   color: 'FF0000' },
+  { name: 'Instagram', slug: 'instagram', color: 'E4405F' },
+];
 
 function formatNum(n, format) {
   if (!format) return Math.round(n).toString();
@@ -86,7 +93,14 @@ export default function Stats() {
           <span className="stats__partners-label">{t('stats.partners')}</span>
           <div className="stats__partners-logos">
             {PARTNERS.map(p => (
-              <span key={p} className="stats__partner-name">{p}</span>
+              <img
+                key={p.name}
+                className="stats__partner-logo"
+                src={`https://cdn.simpleicons.org/${p.slug}/${p.color}`}
+                alt={p.name}
+                title={p.name}
+                draggable={false}
+              />
             ))}
           </div>
         </motion.div>
