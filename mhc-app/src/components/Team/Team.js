@@ -1,19 +1,20 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import img1 from '../../assets/team-image/z7792391558541_fa3f6d477bf041a87bb0e7b2825bb367.jpg';
-import img2 from '../../assets/team-image/z7792508427042_66e65ce160b76e896177eba5f686313b.jpg';
-import img3 from '../../assets/team-image/z7792501428848_fce4a81695469ddabe59b277964f8b5c.jpg';
-import img4 from '../../assets/team-image/z7792499492102_87d37fcea202e05367652a0a61fd31ea.jpg';
-import img5 from '../../assets/team-image/z7792498246382_bac2b086fd89fb717ca5ebd5209c6afe.jpg';
+import imgManh  from '../../assets/team-image/NguyenVanManh.jpg';
+import imgChien from '../../assets/team-image/HoangVanChien.png';
+import imgCuong from '../../assets/team-image/NguyenVanCuong.jpg';
+import imgThai  from '../../assets/team-image/NguyenVanThai.jpg';
+import imgHung  from '../../assets/team-image/NguyenVietHung.jpg';
 import { useLang } from '../../contexts/LangContext';
 import './Team.css';
 
 const MEMBER_STATIC = [
-  { img: img3, name: 'Nguyễn Mạnh',  title: 'CEO & Co-Founder'    },
-  { img: img2, name: 'Trần Hữu B',    title: 'Marketing Director'  },
-  { img: img1, name: 'Lê Minh C',     title: 'Lead Developer'      },
-  { img: img4, name: 'Phạm Thu D',    title: 'SEO Strategist'      },
-  { img: img5, name: 'Hoàng Văn E',   title: 'Data Analyst'        },
+  { img: imgManh,  name: 'Nguyễn Văn Mạnh', title: 'CEO & Co-Founder'   },
+  { img: imgChien, name: 'Hoàng Văn Chiến',       title: 'Leader' },
+  { img: imgCuong, name: 'Lê Minh Cường',        title: 'Leader'     },
+  { img: imgThai,  name: 'Nguyễn Văn Thái',       title: 'Leader'     },
+  { img: imgHung,  name: 'Nguyễn Viết Hùng',      title: 'Leader'       },
+ 
 ];
 
 function MemberCard({ member, index }) {

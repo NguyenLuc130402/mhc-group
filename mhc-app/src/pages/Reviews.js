@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, Target, Layers, DollarSign, ArrowRight, Mail, Search, X, ArrowDown } from 'lucide-react';
 import benefitsImg from '../assets/images/webinar-2.webp';
@@ -201,19 +201,60 @@ function NewsletterSection() {
   );
 }
 
+function highlightMatch(text, query) {
+  if (!query) return text;
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <mark className="rv-suggest__mark">{text.slice(idx, idx + query.length)}</mark>
+      {text.slice(idx + query.length)}
+    </>
+  );
+}
+
 export default function Reviews() {
   const { t } = useLang();
+  const navigate = useNavigate();
+  const [allTools, setAllTools] = useState([]);
   const [featuredTool, setFeaturedTool] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef(null);
 
   useEffect(() => {
     fetchTools()
       .then(tools => {
+        setAllTools(tools);
         const top = [...tools].sort((a, b) => b.rating - a.rating || b.reviews - a.reviews)[0];
         setFeaturedTool(top || null);
       })
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const suggestions = useCallback(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return allTools
+      .filter(tool => tool.name.toLowerCase().includes(q) || tool.category.toLowerCase().includes(q))
+      .slice(0, 6);
+  }, [searchQuery, allTools])();
+
+  function handleSuggestionClick(tool) {
+    setSearchQuery(tool.name);
+    setShowSuggestions(false);
+  }
 
   return (
     <>
@@ -242,19 +283,40 @@ export default function Reviews() {
 
         <div className="rv-search-bar">
           <div className="container">
-            <div className="rv-search-bar__wrap">
+            <div className="rv-search-bar__wrap" ref={searchRef}>
               <Search size={20} className="rv-search-bar__icon" />
               <input
                 type="text"
-                className="rv-search-bar__input"
+                className={`rv-search-bar__input${showSuggestions && suggestions.length > 0 ? ' rv-search-bar__input--open' : ''}`}
                 placeholder={t('reviews.searchPlaceholder')}
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={e => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
+                onFocus={() => setShowSuggestions(true)}
               />
               {searchQuery && (
-                <button className="rv-search-bar__clear" onClick={() => setSearchQuery('')}>
+                <button className="rv-search-bar__clear" onClick={() => { setSearchQuery(''); setShowSuggestions(false); }}>
                   <X size={16} />
                 </button>
+              )}
+              {showSuggestions && suggestions.length > 0 && (
+                <ul className="rv-suggest">
+                  {suggestions.map(tool => (
+                    <li key={tool.id} className="rv-suggest__item" onMouseDown={() => handleSuggestionClick(tool)}>
+                      <ToolLogo tool={tool} size={32} />
+                      <div className="rv-suggest__info">
+                        <span className="rv-suggest__name">{highlightMatch(tool.name, searchQuery)}</span>
+                        <span className="rv-suggest__cat">{tool.category}</span>
+                      </div>
+                      <button
+                        className="rv-suggest__goto"
+                        onMouseDown={e => { e.stopPropagation(); setShowSuggestions(false); navigate(`/tool/${tool.id}`); }}
+                        title="Xem chi tiết"
+                      >
+                        <ArrowRight size={14} />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           </div>
